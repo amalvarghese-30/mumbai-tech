@@ -1,0 +1,478 @@
+<!-- templates/public/enquiry_success.html -->
+{% extends "base.html" %}
+
+{% block title %}Enquiry Submitted | Mumbai-Tech Industrial Parts{% endblock %}
+
+{% block extra_css %}
+<style>
+    .success-container {
+        min-height: 70vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 4rem 2rem;
+        text-align: center;
+    }
+
+    .success-content {
+        max-width: 600px;
+        padding: 3rem;
+        background: var(--bg-card);
+        border: 1px solid var(--border-soft);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-xl);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .success-content::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg,
+                var(--success) 0%,
+                var(--accent-primary) 50%,
+                var(--success) 100%);
+    }
+
+    .success-icon {
+        font-size: 5rem;
+        color: var(--success);
+        margin-bottom: 2rem;
+        animation: successPulse 2s ease infinite;
+    }
+
+    .success-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: var(--text-main);
+    }
+
+    .success-message {
+        font-size: 1.125rem;
+        color: var(--text-secondary);
+        margin-bottom: 2rem;
+        line-height: 1.6;
+    }
+
+    .success-details {
+        background: var(--bg-input);
+        border: 1px solid var(--border-soft);
+        border-radius: var(--radius-md);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        text-align: left;
+    }
+
+    .details-title {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: var(--accent-primary);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .details-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .details-list li {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        margin-bottom: 0.75rem;
+        color: var(--text-secondary);
+        font-size: 0.9375rem;
+    }
+
+    .details-list li i {
+        color: var(--accent-primary);
+        margin-top: 0.25rem;
+        flex-shrink: 0;
+    }
+
+    .next-steps {
+        margin-top: 2.5rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--border-soft);
+    }
+
+    .next-steps-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        color: var(--text-main);
+    }
+
+    .timeline {
+        position: relative;
+        padding-left: 30px;
+        margin-bottom: 2rem;
+    }
+
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 10px;
+        bottom: 10px;
+        width: 2px;
+        background: var(--border-soft);
+    }
+
+    .timeline-item {
+        position: relative;
+        margin-bottom: 1.5rem;
+        padding-left: 2rem;
+    }
+
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -6px;
+        top: 5px;
+        width: 14px;
+        height: 14px;
+        background: var(--accent-primary);
+        border-radius: 50%;
+        border: 2px solid var(--bg-card);
+    }
+
+    .timeline-item h5 {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+        color: var(--text-main);
+    }
+
+    .timeline-item p {
+        color: var(--text-secondary);
+        font-size: 0.9375rem;
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    .success-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 2rem;
+    }
+
+    .action-btn {
+        min-width: 180px;
+    }
+
+    .confirmation-number {
+        background: var(--accent-muted);
+        border: 1px solid var(--accent-border);
+        border-radius: var(--radius-md);
+        padding: 1rem;
+        margin-bottom: 2rem;
+        font-family: var(--font-mono);
+    }
+
+    .confirmation-label {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        margin-bottom: 0.25rem;
+    }
+
+    .confirmation-code {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--accent-primary);
+        letter-spacing: 1px;
+    }
+
+    @keyframes successPulse {
+        0% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.1);
+        }
+
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .success-content {
+            padding: 2rem;
+        }
+
+        .success-title {
+            font-size: 2rem;
+        }
+
+        .success-icon {
+            font-size: 4rem;
+        }
+
+        .success-actions {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .action-btn {
+            width: 100%;
+            max-width: 300px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="success-container">
+    <div class="success-content">
+        <div class="success-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+
+        <h1 class="success-title">Enquiry Submitted Successfully!</h1>
+
+        <p class="success-message">
+            Thank you for your interest in Mumbai-Tech industrial parts. Your enquiry has been received
+            and our team will review your requirements shortly.
+        </p>
+
+        <!-- Confirmation Number -->
+        <div class="confirmation-number">
+            <div class="confirmation-label">Reference Number</div>
+            <div class="confirmation-code" id="referenceNumber">MT-{{ "%06d"|format(random_number) }}</div>
+        </div>
+
+        <!-- Enquiry Details -->
+        <div class="success-details">
+            <h4 class="details-title">
+                <i class="fas fa-clipboard-check"></i>
+                What happens next?
+            </h4>
+            <ul class="details-list">
+                <li>
+                    <i class="fas fa-envelope"></i>
+                    <div>
+                        <strong>Confirmation Email:</strong> You will receive an email confirmation
+                        with your enquiry details and reference number.
+                    </div>
+                </li>
+                <li>
+                    <i class="fas fa-user-check"></i>
+                    <div>
+                        <strong>Technical Review:</strong> Our engineering team will review your
+                        requirements and specifications.
+                    </div>
+                </li>
+                <li>
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <div>
+                        <strong>Quotation Preparation:</strong> We will prepare a detailed quotation
+                        including pricing, specifications, and delivery timelines.
+                    </div>
+                </li>
+                <li>
+                    <i class="fas fa-headset"></i>
+                    <div>
+                        <strong>Follow-up Call:</strong> A representative may contact you within
+                        24 hours for any clarifications needed.
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Next Steps Timeline -->
+        <div class="next-steps">
+            <h3 class="next-steps-title">Next Steps Timeline</h3>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h5>Within 1 Hour</h5>
+                    <p>Email confirmation with your enquiry reference number</p>
+                </div>
+
+                <div class="timeline-item">
+                    <h5>Within 4 Hours</h5>
+                    <p>Initial review by our technical team</p>
+                </div>
+
+                <div class="timeline-item">
+                    <h5>Within 24 Hours</h5>
+                    <p>Detailed quotation with specifications and pricing</p>
+                </div>
+
+                <div class="timeline-item">
+                    <h5>Within 48 Hours</h5>
+                    <p>Follow-up call to discuss requirements (if needed)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Information -->
+        <div class="success-details mt-4">
+            <h4 class="details-title">
+                <i class="fas fa-info-circle"></i>
+                Need Immediate Assistance?
+            </h4>
+            <div style="text-align: center;">
+                <p style="margin-bottom: 1rem; color: var(--text-secondary);">
+                    For urgent inquiries or to discuss your requirements immediately,
+                    contact our sales team directly:
+                </p>
+                <div style="display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap;">
+                    <div>
+                        <i class="fas fa-phone" style="color: var(--accent-primary); margin-right: 0.5rem;"></i>
+                        <a href="tel:+912212345678" style="color: var(--text-main); font-weight: 600;">
+                            +91 22 1234 5678
+                        </a>
+                    </div>
+                    <div>
+                        <i class="fas fa-envelope" style="color: var(--accent-primary); margin-right: 0.5rem;"></i>
+                        <a href="mailto:sales@mumbai-tech.com" style="color: var(--text-main); font-weight: 600;">
+                            sales@mumbai-tech.com
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="success-actions">
+            <a href="{{ url_for('index') }}" class="btn btn-primary action-btn">
+                <i class="fas fa-home mr-2"></i>Return to Home
+            </a>
+            <a href="{{ url_for('all_products') }}" class="btn btn-outline action-btn">
+                <i class="fas fa-cogs mr-2"></i>Browse More Products
+            </a>
+            <a href="{{ url_for('enquiry') }}" class="btn btn-secondary action-btn">
+                <i class="fas fa-plus mr-2"></i>Submit Another Enquiry
+            </a>
+        </div>
+
+        <p class="text-muted mt-4" style="font-size: 0.875rem;">
+            <i class="fas fa-clock mr-2"></i>
+            Business Hours: Mon-Sat, 9:00 AM - 7:00 PM IST
+        </p>
+    </div>
+</div>
+
+<!-- Flash Messages (will show automatically from Flask) -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="flash-messages">
+    {% for category, message in messages %}
+    <div class="flash-message flash-{{ category }}">
+        <span>{{ message }}</span>
+        <button class="flash-close">&times;</button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Generate random reference number if not provided
+    document.addEventListener('DOMContentLoaded', function () {
+        const refElement = document.getElementById('referenceNumber');
+        if (refElement && refElement.textContent === 'MT-000000') {
+            // Generate a random 6-digit number
+            const randomNum = Math.floor(100000 + Math.random() * 900000);
+            refElement.textContent = `MT-${randomNum}`;
+        }
+
+        // Auto-hide flash messages after 5 seconds
+        const flashMessages = document.querySelectorAll('.flash-message');
+        flashMessages.forEach(message => {
+            setTimeout(() => {
+                message.style.opacity = '0';
+                setTimeout(() => message.remove(), 300);
+            }, 5000);
+        });
+
+        // Close button for flash messages
+        document.querySelectorAll('.flash-close').forEach(button => {
+            button.addEventListener('click', function () {
+                this.parentElement.style.opacity = '0';
+                setTimeout(() => this.parentElement.remove(), 300);
+            });
+        });
+
+        // Copy reference number to clipboard
+        refElement.addEventListener('click', function () {
+            navigator.clipboard.writeText(this.textContent)
+                .then(() => {
+                    const originalText = this.textContent;
+                    this.textContent = 'Copied!';
+                    this.style.color = 'var(--success)';
+                    setTimeout(() => {
+                        this.textContent = originalText;
+                        this.style.color = '';
+                    }, 2000);
+                })
+                .catch(err => console.error('Failed to copy:', err));
+        });
+
+        // Add subtle animation to success icon
+        const successIcon = document.querySelector('.success-icon');
+        if (successIcon) {
+            setTimeout(() => {
+                successIcon.style.animation = 'none';
+                setTimeout(() => {
+                    successIcon.style.animation = 'successPulse 2s ease infinite';
+                }, 10);
+            }, 1000);
+        }
+
+        // Print functionality
+        const printBtn = document.createElement('button');
+        printBtn.innerHTML = '<i class="fas fa-print mr-2"></i>Print Confirmation';
+        printBtn.className = 'btn btn-secondary mt-3';
+        printBtn.onclick = () => window.print();
+        document.querySelector('.success-actions').appendChild(printBtn);
+    });
+
+    // Print styles
+    const style = document.createElement('style');
+    style.textContent = `
+        @media print {
+            header, footer, .success-actions, .flash-messages {
+                display: none !important;
+            }
+            
+            .success-content {
+                box-shadow: none !important;
+                border: 2px solid #000 !important;
+                max-width: 100% !important;
+            }
+            
+            .success-icon {
+                color: #000 !important;
+            }
+            
+            body {
+                color: #000 !important;
+                background: #fff !important;
+            }
+            
+            a {
+                color: #000 !important;
+                text-decoration: none !important;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+</script>
+{% endblock %}

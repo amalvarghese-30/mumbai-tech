@@ -1,0 +1,333 @@
+<!-- templates/public/categories.html -->
+{% extends "base.html" %}
+
+{% block title %}Product Categories | Mumbai-Tech Industrial Parts{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-categories {
+        background: linear-gradient(rgba(14, 14, 14, 0.9), rgba(14, 14, 14, 0.95)),
+        url("{{ url_for('static', filename='images/categories-hero.jpg') }}");
+        background-size: cover;
+        background-position: center;
+        padding: 6rem 0 4rem;
+        text-align: center;
+    }
+
+    .hero-categories h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .hero-categories .subtitle {
+        font-size: 1.25rem;
+        color: var(--text-secondary);
+        max-width: 700px;
+        margin: 0 auto 2rem;
+        line-height: 1.6;
+    }
+
+    .categories-section {
+        padding: 4rem 0;
+    }
+
+    .category-card-large {
+        background: var(--bg-card);
+        border: 1px solid var(--border-soft);
+        border-radius: var(--radius-lg);
+        padding: 2.5rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .category-card-large:hover {
+        transform: translateY(-8px);
+        border-color: var(--accent-primary);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .category-icon-large {
+        width: 80px;
+        height: 80px;
+        background: var(--accent-muted);
+        border-radius: var(--radius-lg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .category-icon-large i {
+        font-size: 2.5rem;
+        color: var(--accent-primary);
+    }
+
+    .category-name-large {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: var(--text-main);
+    }
+
+    .category-description-large {
+        color: var(--text-secondary);
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+    }
+
+    .category-stats {
+        display: flex;
+        gap: 1.5rem;
+        justify-content: center;
+        margin-top: auto;
+    }
+
+    .stat-item {
+        text-align: center;
+    }
+
+    .stat-number {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--accent-primary);
+    }
+
+    .stat-label {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .products-preview {
+        background: var(--bg-elevated);
+        padding: 4rem 0;
+    }
+
+    .grid-categories {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    @media (max-width: 768px) {
+        .hero-categories h1 {
+            font-size: 2.25rem;
+        }
+
+        .hero-categories .subtitle {
+            font-size: 1.125rem;
+        }
+
+        .grid-categories {
+            grid-template-columns: 1fr;
+        }
+
+        .category-stats {
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-categories">
+    <div class="container">
+        <h1>Industrial Parts Categories</h1>
+        <p class="subtitle">
+            Browse our comprehensive collection of engineering-grade machinery components
+            organized by category for easy navigation and selection.
+        </p>
+        <div class="search-box">
+            <form action="{{ url_for('search') }}" method="GET" class="search-form">
+                <input type="text" name="q" class="search-input" placeholder="Search categories or products...">
+                <button type="submit" class="search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Grid -->
+<section class="categories-section">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="section-title">All Categories</h2>
+            <p class="section-subtitle" style="max-width: 700px; margin: 0 auto;">
+                Specialized components for every industrial need
+            </p>
+        </div>
+
+        <div class="grid-categories">
+            {% for category in categories %}
+            <a href="{{ url_for('category_products', category_id=category._id) }}" class="category-card-large">
+                <div class="category-icon-large">
+                    <i class="{{ category.icon_class or 'fas fa-cog' }}"></i>
+                </div>
+                <h3 class="category-name-large">{{ category.name }}</h3>
+                <p class="category-description-large">
+                    {{ category.description or 'High-quality components for industrial machinery' }}
+                </p>
+                <div class="category-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">
+                            {% if category.product_count %}
+                            {{ category.product_count }}
+                            {% else %}
+                            {{ products_count[category._id] or '50+' }}
+                            {% endif %}
+                        </div>
+                        <div class="stat-label">Products</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">15+</div>
+                        <div class="stat-label">Years</div>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <span class="btn btn-outline btn-sm">
+                        Browse Products <i class="fas fa-arrow-right ml-2"></i>
+                    </span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Featured Categories -->
+<section class="products-preview">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="section-title">Popular Categories</h2>
+            <p class="section-subtitle" style="max-width: 700px; margin: 0 auto;">
+                Most requested industrial components
+            </p>
+        </div>
+
+        <div class="row">
+            {% for category in categories[:6] %}
+            <div class="col-md-4 mb-4">
+                <div class="category-card">
+                    <div class="category-icon">
+                        <i class="{{ category.icon_class or 'fas fa-cog' }}"></i>
+                    </div>
+                    <h4 class="category-name">{{ category.name }}</h4>
+                    <p class="category-description">
+                        {{ category.description|truncate(80) or 'Industrial machinery components' }}
+                    </p>
+                    <a href="{{ url_for('category_products', category_id=category._id) }}" class="btn-view">
+                        View Products
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Industry Applications -->
+<section class="container py-6">
+    <div class="text-center mb-5">
+        <h2 class="section-title">Industry Applications</h2>
+        <p class="section-subtitle" style="max-width: 700px; margin: 0 auto;">
+            Serving diverse industrial sectors with precision components
+        </p>
+    </div>
+
+    <div class="row text-center">
+        <div class="col-md-3 col-6 mb-4">
+            <div class="application-item">
+                <div class="application-icon">
+                    <i class="fas fa-tractor" style="color: var(--accent-primary); font-size: 2.5rem;"></i>
+                </div>
+                <h5 style="margin-top: 1rem; font-weight: 600;">Agriculture</h5>
+            </div>
+        </div>
+        <div class="col-md-3 col-6 mb-4">
+            <div class="application-item">
+                <div class="application-icon">
+                    <i class="fas fa-hard-hat" style="color: var(--accent-primary); font-size: 2.5rem;"></i>
+                </div>
+                <h5 style="margin-top: 1rem; font-weight: 600;">Construction</h5>
+            </div>
+        </div>
+        <div class="col-md-3 col-6 mb-4">
+            <div class="application-item">
+                <div class="application-icon">
+                    <i class="fas fa-industry" style="color: var(--accent-primary); font-size: 2.5rem;"></i>
+                </div>
+                <h5 style="margin-top: 1rem; font-weight: 600;">Manufacturing</h5>
+            </div>
+        </div>
+        <div class="col-md-3 col-6 mb-4">
+            <div class="application-item">
+                <div class="application-icon">
+                    <i class="fas fa-truck-monster" style="color: var(--accent-primary); font-size: 2.5rem;"></i>
+                </div>
+                <h5 style="margin-top: 1rem; font-weight: 600;">Mining</h5>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="section-cta py-6">
+    <div class="container">
+        <div class="cta-content text-center">
+            <h2 class="cta-title">Need Specific Components?</h2>
+            <p class="cta-text">
+                Can't find what you're looking for? Our technical team can help source or
+                customize components for your specific requirements.
+            </p>
+            <div class="cta-actions">
+                <a href="{{ url_for('enquiry') }}" class="btn btn-primary btn-lg mr-3">
+                    <i class="fas fa-envelope mr-2"></i>Custom Enquiry
+                </a>
+                <a href="tel:+912212345678" class="btn btn-outline btn-lg">
+                    <i class="fas fa-phone mr-2"></i>Technical Support
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Animate category cards on scroll
+    document.addEventListener('DOMContentLoaded', function () {
+        const categoryCards = document.querySelectorAll('.category-card-large');
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }, index * 100);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        categoryCards.forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            observer.observe(card);
+        });
+    });
+</script>
+{% endblock %}

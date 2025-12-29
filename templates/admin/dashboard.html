@@ -1,0 +1,200 @@
+<!-- templates/admin/dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | MUMBAI-TECH</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="premium-theme">
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="admin-logo">
+                <i class="fas fa-industry"></i>
+                <span>MUMBAI-TECH</span>
+            </div>
+
+            <ul class="admin-nav">
+                <li><a href="{{ url_for('admin_dashboard') }}" class="active">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a></li>
+                <li><a href="{{ url_for('admin_products') }}">
+                        <i class="fas fa-cogs"></i>
+                        <span>Products</span>
+                    </a></li>
+                <li><a href="{{ url_for('admin_categories') }}">
+                        <i class="fas fa-tags"></i>
+                        <span>Categories</span>
+                    </a></li>
+                <li><a href="{{ url_for('admin_enquiries') }}">
+                        <i class="fas fa-envelope"></i>
+                        <span>Enquiries</span>
+                    </a></li>
+                <li><a href="{{ url_for('admin_activities') }}">
+                        <i class="fas fa-history"></i>
+                        <span>Activity Log</span>
+                    </a></li>
+                <li><a href="{{ url_for('index') }}" target="_blank">
+                        <i class="fas fa-external-link-alt"></i>
+                        <span>View Site</span>
+                    </a></li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <a href="{{ url_for('admin_logout') }}" class="btn btn-danger btn-block">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <!-- Header -->
+            <header class="admin-header">
+                <h1>Dashboard</h1>
+                <div class="admin-user">
+                    <div class="admin-avatar">
+                        {{ current_user.username[0]|upper }}
+                    </div>
+                    <div>
+                        <div class="user-name">{{ current_user.username }}</div>
+                        <div class="user-role">{{ current_user.role|title }}</div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <div class="admin-content">
+                <!-- Stats -->
+                <div class="admin-stats">
+                    <div class="stat-box">
+                        <i class="fas fa-cogs"></i>
+                        <h3>{{ stats.total_products }}</h3>
+                        <p>Total Products</p>
+                    </div>
+                    <div class="stat-box">
+                        <i class="fas fa-tags"></i>
+                        <h3>{{ stats.total_categories }}</h3>
+                        <p>Categories</p>
+                    </div>
+                    <div class="stat-box">
+                        <i class="fas fa-envelope"></i>
+                        <h3>{{ stats.new_enquiries }}</h3>
+                        <p>New Enquiries</p>
+                    </div>
+                    <div class="stat-box">
+                        <i class="fas fa-chart-line"></i>
+                        <h3>{{ stats.total_enquiries }}</h3>
+                        <p>Total Enquiries</p>
+                    </div>
+                </div>
+
+                <!-- Recent Enquiries -->
+                <div class="admin-card">
+                    <h2>Recent Enquiries</h2>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Product</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for enquiry in recent_enquiries %}
+                                <tr>
+                                    <td>{{ enquiry.created_at.strftime('%Y-%m-%d') }}</td>
+                                    <td>{{ enquiry.name }}</td>
+                                    <td>{{ enquiry.email }}</td>
+                                    <td>
+                                        {% if enquiry.product_id %}
+                                        Product #{{ enquiry.product_id[:8] }}
+                                        {% else %}
+                                        General
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if enquiry.status == 'new' %}
+                                        <span class="badge badge-new">New</span>
+                                        {% elif enquiry.status == 'contacted' %}
+                                        <span class="badge badge-contacted">Contacted</span>
+                                        {% elif enquiry.status == 'quoted' %}
+                                        <span class="badge badge-quoted">Quoted</span>
+                                        {% else %}
+                                        <span class="badge badge-closed">Closed</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="table-actions">
+                                        <a href="{{ url_for('view_enquiry', enquiry_id=enquiry._id) }}"
+                                            class="btn btn-sm btn-view">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="6" style="text-align: center;">No enquiries yet</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Recent Activities -->
+                <div class="admin-card">
+                    <h2>Recent Activities</h2>
+                    <div class="activity-list">
+                        {% for activity in recent_activities %}
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i
+                                    class="fas fa-{% if 'add' in activity.action %}plus{% elif 'edit' in activity.action %}edit{% elif 'delete' in activity.action %}trash{% else %}info{% endif %}"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-text">{{ activity.details }}</div>
+                                <div class="activity-meta">
+                                    <span class="activity-user">{{ activity.user_name }}</span>
+                                    <span class="activity-time">{{ activity.timestamp.strftime('%Y-%m-%d %H:%M')
+                                        }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        <p style="text-align: center; color: var(--color-charcoal-light);">No activities yet</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-messages">
+        {% for category, message in messages %}
+        <div class="flash-message flash-{{ category }}">
+            <span>{{ message }}</span>
+            <button class="flash-close">&times;</button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+</body>
+
+</html>

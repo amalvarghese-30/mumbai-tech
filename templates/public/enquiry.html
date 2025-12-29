@@ -1,0 +1,863 @@
+<!-- templates/public/enquiry.html -->
+{% extends "base.html" %}
+
+{% block title %}Request Quote | Mumbai-Tech Industrial Parts{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-enquiry {
+        background: linear-gradient(rgba(14, 14, 14, 0.9), rgba(14, 14, 14, 0.95)),
+        url("{{ url_for('static', filename='images/enquiry-hero.jpg') }}");
+        background-size: cover;
+        background-position: center;
+        padding: 6rem 0 4rem;
+        text-align: center;
+    }
+
+    .hero-enquiry h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .hero-enquiry .subtitle {
+        font-size: 1.25rem;
+        color: var(--text-secondary);
+        max-width: 700px;
+        margin: 0 auto 2rem;
+        line-height: 1.6;
+    }
+
+    .enquiry-section {
+        padding: 4rem 0;
+    }
+
+    .enquiry-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .product-preview {
+        background: var(--bg-card);
+        border: 1px solid var(--border-soft);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .product-preview-image {
+        width: 100px;
+        height: 100px;
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        background: var(--bg-input);
+        flex-shrink: 0;
+    }
+
+    .product-preview-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .product-preview-info {
+        flex: 1;
+    }
+
+    .product-preview-name {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--text-main);
+    }
+
+    .product-preview-meta {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .product-preview-meta span {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+    }
+
+    .remove-product {
+        color: var(--error);
+        background: none;
+        border: none;
+        font-size: 1.25rem;
+        cursor: pointer;
+        padding: 0.5rem;
+    }
+
+    .enquiry-form-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-soft);
+        border-radius: var(--radius-lg);
+        padding: 2.5rem;
+    }
+
+    .form-step {
+        display: none;
+    }
+
+    .form-step.active {
+        display: block;
+        animation: fadeIn 0.5s ease;
+    }
+
+    .step-indicator {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 3rem;
+        position: relative;
+    }
+
+    .step-indicator::before {
+        content: '';
+        position: absolute;
+        top: 15px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: var(--border-soft);
+        z-index: 1;
+    }
+
+    .step {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        flex: 1;
+    }
+
+    .step-circle {
+        width: 32px;
+        height: 32px;
+        background: var(--bg-input);
+        border: 2px solid var(--border-soft);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 0.5rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        transition: all 0.3s ease;
+    }
+
+    .step.active .step-circle {
+        background: var(--accent-primary);
+        border-color: var(--accent-primary);
+        color: var(--text-inverse);
+    }
+
+    .step-label {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        transition: color 0.3s ease;
+    }
+
+    .step.active .step-label {
+        color: var(--accent-primary);
+        font-weight: 500;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--border-soft);
+    }
+
+    .requirements-list {
+        margin-bottom: 2rem;
+    }
+
+    .requirement-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        padding: 1rem;
+        background: var(--accent-muted);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--accent-border);
+    }
+
+    .requirement-item i {
+        color: var(--accent-primary);
+        margin-top: 0.25rem;
+        flex-shrink: 0;
+    }
+
+    .requirement-content h4 {
+        font-size: 1rem;
+        margin-bottom: 0.25rem;
+        color: var(--text-main);
+    }
+
+    .requirement-content p {
+        margin: 0;
+        color: var(--text-secondary);
+        font-size: 0.9375rem;
+        line-height: 1.5;
+    }
+
+    .upload-area {
+        border: 2px dashed var(--border-soft);
+        border-radius: var(--radius-md);
+        padding: 3rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: var(--bg-input);
+    }
+
+    .upload-area:hover {
+        border-color: var(--accent-primary);
+        background: var(--accent-muted);
+    }
+
+    .upload-area i {
+        font-size: 3rem;
+        color: var(--accent-primary);
+        margin-bottom: 1rem;
+    }
+
+    .upload-text {
+        color: var(--text-secondary);
+        margin-bottom: 0.5rem;
+    }
+
+    .upload-note {
+        font-size: 0.875rem;
+        color: var(--text-muted);
+    }
+
+    .confirmation-message {
+        text-align: center;
+        padding: 2rem;
+    }
+
+    .confirmation-icon {
+        font-size: 4rem;
+        color: var(--success);
+        margin-bottom: 1.5rem;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .hero-enquiry h1 {
+            font-size: 2.25rem;
+        }
+
+        .hero-enquiry .subtitle {
+            font-size: 1.125rem;
+        }
+
+        .enquiry-form-card {
+            padding: 1.5rem;
+        }
+
+        .step-indicator {
+            gap: 0.5rem;
+        }
+
+        .step-label {
+            font-size: 0.75rem;
+        }
+
+        .product-preview {
+            flex-direction: column;
+            text-align: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-enquiry">
+    <div class="container">
+        <h1>Request a Quote</h1>
+        <p class="subtitle">
+            Get competitive pricing and technical specifications for industrial machinery parts.
+            Our team will provide detailed quotations within 24 hours.
+        </p>
+        <div class="enquiry-cta">
+            <a href="tel:+912212345678" class="btn btn-outline btn-lg">
+                <i class="fas fa-phone mr-2"></i>Need Immediate Help? Call Now
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Enquiry Form -->
+<section class="enquiry-section">
+    <div class="container">
+        <div class="enquiry-container">
+            {% if product_id %}
+            <!-- Product Preview -->
+            <div class="product-preview">
+                <div class="product-preview-image">
+                    {% if product.images and product.images|length > 0 %}
+                    <img src="{{ url_for('static', filename='uploads/' + product.images[0]) }}"
+                        alt="{{ product.name }}">
+                    {% else %}
+                    <i class="fas fa-cog"
+                        style="font-size: 3rem; color: var(--border-medium); 
+                                                display: flex; align-items: center; justify-content: center; height: 100%;"></i>
+                    {% endif %}
+                </div>
+                <div class="product-preview-info">
+                    <h3 class="product-preview-name">{{ product.name }}</h3>
+                    <div class="product-preview-meta">
+                        <span><i class="fas fa-hashtag"></i> {{ product.part_number }}</span>
+                        <span><i class="fas fa-industry"></i> {{ product.manufacturer }}</span>
+                        <span><i class="fas fa-tag"></i> {{ product.category_name }}</span>
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 0.9375rem; margin: 0;">
+                        You are requesting a quote for this specific product
+                    </p>
+                </div>
+                <button class="remove-product" onclick="window.location.href='{{ url_for('enquiry') }}'">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            {% endif %}
+
+            <!-- Step Indicator -->
+            <div class="step-indicator">
+                <div class="step active" data-step="1">
+                    <div class="step-circle">1</div>
+                    <div class="step-label">Contact Info</div>
+                </div>
+                <div class="step" data-step="2">
+                    <div class="step-circle">2</div>
+                    <div class="step-label">Requirements</div>
+                </div>
+                <div class="step" data-step="3">
+                    <div class="step-circle">3</div>
+                    <div class="step-label">Review & Submit</div>
+                </div>
+            </div>
+
+            <!-- Multi-step Form -->
+            <div class="enquiry-form-card">
+                <form method="POST" action="{{ url_for('enquiry') }}" id="enquiryForm" enctype="multipart/form-data">
+                    {{ form.hidden_tag() }}
+                    <input type="hidden" name="product_id" value="{{ product_id or '' }}">
+
+                    <!-- Step 1: Contact Information -->
+                    <div class="form-step active" id="step1">
+                        <h3 class="mb-4" style="color: var(--accent-primary);">Contact Information</h3>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    {{ form.name.label(class="form-label") }}
+                                    {{ form.name(class="form-control", required=true, placeholder="Your full name") }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    {{ form.email.label(class="form-label") }}
+                                    {{ form.email(class="form-control", required=true,
+                                    placeholder="Email address", type="email") }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    {{ form.phone.label(class="form-label") }}
+                                    {{ form.phone(class="form-control", required=true,
+                                    placeholder="Phone number with country code") }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    {{ form.company.label(class="form-label") }}
+                                    {{ form.company(class="form-control", placeholder="Company name (optional)") }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Country</label>
+                                    <select class="form-control" name="country" required>
+                                        <option value="">Select Country</option>
+                                        <option value="India" selected>India</option>
+                                        <option value="USA">United States</option>
+                                        <option value="UK">United Kingdom</option>
+                                        <option value="Germany">Germany</option>
+                                        <option value="Japan">Japan</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Industry</label>
+                                    <select class="form-control" name="industry">
+                                        <option value="">Select Industry</option>
+                                        <option value="construction">Construction</option>
+                                        <option value="manufacturing">Manufacturing</option>
+                                        <option value="mining">Mining</option>
+                                        <option value="agriculture">Agriculture</option>
+                                        <option value="oil_gas">Oil & Gas</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Requirements -->
+                    <div class="form-step" id="step2">
+                        <h3 class="mb-4" style="color: var(--accent-primary);">Product Requirements</h3>
+
+                        <div class="requirements-list">
+                            <div class="requirement-item">
+                                <i class="fas fa-info-circle"></i>
+                                <div class="requirement-content">
+                                    <h4>Provide Detailed Information</h4>
+                                    <p>The more details you provide, the more accurate our quotation will be.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            {{ form.message.label(class="form-label") }}
+                            {{ form.message(class="form-control", rows="6", required=true,
+                            placeholder="Please provide details about your requirements:\n• Product specifications
+                            needed\n• Quantity required\n• Application/Usage\n• Any special requirements\n• Delivery
+                            timeline\n• Budget constraints (if any)") }}
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Quantity Required</label>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <input type="number" name="quantity" class="form-control" min="1"
+                                        placeholder="Enter quantity" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <select class="form-control" name="quantity_unit">
+                                        <option value="pieces">Pieces</option>
+                                        <option value="sets">Sets</option>
+                                        <option value="kilograms">Kilograms</option>
+                                        <option value="liters">Liters</option>
+                                        <option value="meters">Meters</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Delivery Requirements</label>
+                            <select class="form-control" name="delivery_urgency">
+                                <option value="">Select urgency</option>
+                                <option value="urgent">Urgent (Within 1 week)</option>
+                                <option value="standard" selected>Standard (2-4 weeks)</option>
+                                <option value="flexible">Flexible (1-3 months)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Upload Specifications (Optional)</label>
+                            <div class="upload-area" onclick="document.getElementById('file-upload').click()">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p class="upload-text">Click to upload files</p>
+                                <p class="upload-note">Supported: PDF, DOC, JPG, PNG, CAD files (Max 10MB each)</p>
+                                <input type="file" id="file-upload" name="spec_files" multiple
+                                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.dwg,.dxf" style="display: none;">
+                            </div>
+                            <div id="file-preview" class="mt-2"></div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Review & Submit -->
+                    <div class="form-step" id="step3">
+                        <h3 class="mb-4" style="color: var(--accent-primary);">Review Your Enquiry</h3>
+
+                        <div class="review-section">
+                            <div class="review-card">
+                                <h4 class="mb-3">Contact Information</h4>
+                                <div class="review-details" id="review-contact"></div>
+                            </div>
+
+                            <div class="review-card mt-4">
+                                <h4 class="mb-3">Requirements Summary</h4>
+                                <div class="review-details" id="review-requirements"></div>
+                            </div>
+
+                            {% if product_id %}
+                            <div class="review-card mt-4">
+                                <h4 class="mb-3">Product Details</h4>
+                                <div class="review-details">
+                                    <p><strong>Product:</strong> {{ product.name }}</p>
+                                    <p><strong>Part Number:</strong> {{ product.part_number }}</p>
+                                    <p><strong>Manufacturer:</strong> {{ product.manufacturer }}</p>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <div class="form-group mt-4">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="terms" required>
+                                    <label class="form-check-label" for="terms">
+                                        I agree to the <a href="#" style="color: var(--accent-primary);">Terms of
+                                            Service</a>
+                                        and <a href="#" style="color: var(--accent-primary);">Privacy Policy</a>.
+                                        I understand that this enquiry will be processed by Mumbai-Tech and
+                                        I may be contacted via email or phone.
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Navigation -->
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="prevBtn" style="display: none;">
+                            <i class="fas fa-arrow-left mr-2"></i>Previous
+                        </button>
+                        <button type="button" class="btn btn-primary" id="nextBtn">
+                            Next <i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                        <button type="submit" class="btn btn-success" id="submitBtn" style="display: none;">
+                            <i class="fas fa-paper-plane mr-2"></i>Submit Enquiry
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Process Info -->
+<section class="bg-soft py-6">
+    <div class="container">
+        <div class="text-center mb-6">
+            <h2 class="section-title">Our Quotation Process</h2>
+            <p class="section-subtitle" style="max-width: 700px; margin: 0 auto;">
+                Simple steps to get accurate pricing for industrial components
+            </p>
+        </div>
+
+        <div class="row text-center">
+            <div class="col-md-3 mb-4">
+                <div class="process-step">
+                    <div class="process-icon">
+                        <i class="fas fa-envelope" style="color: var(--accent-primary); font-size: 2.5rem;"></i>
+                    </div>
+                    <h5 style="margin-top: 1rem; font-weight: 600;">Submit Enquiry</h5>
+                    <p style="color: var(--text-secondary); font-size: 0.9375rem; margin-top: 0.5rem;">
+                        Fill out the form with your requirements
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="process-step">
+                    <div class="process-icon">
+                        <i class="fas fa-clipboard-check" style="color: var(--accent-primary); font-size: 2.5rem;"></i>
+                    </div>
+                    <h5 style="margin-top: 1rem; font-weight: 600;">Review by Experts</h5>
+                    <p style="color: var(--text-secondary); font-size: 0.9375rem; margin-top: 0.5rem;">
+                        Technical team analyzes your requirements
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="process-step">
+                    <div class="process-icon">
+                        <i class="fas fa-file-invoice-dollar"
+                            style="color: var(--accent-primary); font-size: 2.5rem;"></i>
+                    </div>
+                    <h5 style="margin-top: 1rem; font-weight: 600;">Receive Quote</h5>
+                    <p style="color: var(--text-secondary); font-size: 0.9375rem; margin-top: 0.5rem;">
+                        Detailed quotation within 24 hours
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="process-step">
+                    <div class="process-icon">
+                        <i class="fas fa-shipping-fast" style="color: var(--accent-primary); font-size: 2.5rem;"></i>
+                    </div>
+                    <h5 style="margin-top: 1rem; font-weight: 600;">Order & Delivery</h5>
+                    <p style="color: var(--text-secondary); font-size: 0.9375rem; margin-top: 0.5rem;">
+                        Fast processing and reliable delivery
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Support -->
+<section class="section-cta py-6">
+    <div class="container">
+        <div class="cta-content text-center">
+            <h2 class="cta-title">Need Immediate Assistance?</h2>
+            <p class="cta-text">
+                For urgent requirements or complex inquiries, contact our support team directly.
+            </p>
+            <div class="cta-actions">
+                <a href="tel:+912212345678" class="btn btn-primary btn-lg mr-3">
+                    <i class="fas fa-phone mr-2"></i>Call: +91 22 1234 5678
+                </a>
+                <a href="mailto:sales@mumbai-tech.com" class="btn btn-outline btn-lg">
+                    <i class="fas fa-envelope mr-2"></i>Email: sales@mumbai-tech.com
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Multi-step form functionality
+    let currentStep = 1;
+    const totalSteps = 3;
+
+    function showStep(step) {
+        // Hide all steps
+        document.querySelectorAll('.form-step').forEach(stepEl => {
+            stepEl.classList.remove('active');
+        });
+
+        // Show current step
+        document.getElementById(`step${step}`).classList.add('active');
+
+        // Update step indicator
+        document.querySelectorAll('.step').forEach(stepEl => {
+            stepEl.classList.remove('active');
+        });
+        document.querySelector(`.step[data-step="${step}"]`).classList.add('active');
+
+        // Update buttons
+        document.getElementById('prevBtn').style.display = step > 1 ? 'inline-flex' : 'none';
+        document.getElementById('nextBtn').style.display = step < totalSteps ? 'inline-flex' : 'none';
+        document.getElementById('submitBtn').style.display = step === totalSteps ? 'inline-flex' : 'none';
+
+        currentStep = step;
+
+        // Update review section
+        if (step === totalSteps) {
+            updateReview();
+        }
+    }
+
+    function nextStep() {
+        if (validateStep(currentStep)) {
+            if (currentStep < totalSteps) {
+                showStep(currentStep + 1);
+            }
+        }
+    }
+
+    function prevStep() {
+        if (currentStep > 1) {
+            showStep(currentStep - 1);
+        }
+    }
+
+    function validateStep(step) {
+        let isValid = true;
+
+        if (step === 1) {
+            const requiredFields = document.querySelectorAll('#step1 input[required], #step1 select[required]');
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    isValid = false;
+                    field.classList.add('is-invalid');
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+            });
+
+            // Validate email
+            const emailField = document.querySelector('#step1 input[type="email"]');
+            if (emailField.value && !isValidEmail(emailField.value)) {
+                isValid = false;
+                emailField.classList.add('is-invalid');
+            }
+        }
+
+        if (step === 2) {
+            const messageField = document.querySelector('#step2 textarea[required]');
+            if (!messageField.value.trim()) {
+                isValid = false;
+                messageField.classList.add('is-invalid');
+            } else {
+                messageField.classList.remove('is-invalid');
+            }
+        }
+
+        if (!isValid) {
+            alert('Please fill in all required fields correctly.');
+        }
+
+        return isValid;
+    }
+
+    function isValidEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+
+    function updateReview() {
+        // Contact info
+        const contactInfo = `
+            <p><strong>Name:</strong> ${document.querySelector('input[name="name"]').value}</p>
+            <p><strong>Email:</strong> ${document.querySelector('input[name="email"]').value}</p>
+            <p><strong>Phone:</strong> ${document.querySelector('input[name="phone"]').value}</p>
+            ${document.querySelector('input[name="company"]').value ?
+                `<p><strong>Company:</strong> ${document.querySelector('input[name="company"]').value}</p>` : ''}
+            <p><strong>Country:</strong> ${document.querySelector('select[name="country"]').value}</p>
+            ${document.querySelector('select[name="industry"]').value ?
+                `<p><strong>Industry:</strong> ${document.querySelector('select[name="industry"]').value}</p>` : ''}
+        `;
+        document.getElementById('review-contact').innerHTML = contactInfo;
+
+        // Requirements
+        const requirementsInfo = `
+            <p><strong>Message:</strong> ${document.querySelector('textarea[name="message"]').value}</p>
+            <p><strong>Quantity:</strong> ${document.querySelector('input[name="quantity"]').value || '1'} 
+            ${document.querySelector('select[name="quantity_unit"]').value}</p>
+            ${document.querySelector('select[name="delivery_urgency"]').value ?
+                `<p><strong>Delivery Urgency:</strong> ${document.querySelector('select[name="delivery_urgency"]').value}</p>` : ''}
+        `;
+        document.getElementById('review-requirements').innerHTML = requirementsInfo;
+    }
+
+    // File upload preview
+    document.getElementById('file-upload').addEventListener('change', function (e) {
+        const preview = document.getElementById('file-preview');
+        preview.innerHTML = '';
+
+        Array.from(e.target.files).forEach(file => {
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            fileItem.style.cssText = `
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                padding: 0.5rem;
+                background: var(--bg-input);
+                border-radius: var(--radius-sm);
+                margin-bottom: 0.5rem;
+            `;
+
+            const icon = document.createElement('i');
+            if (file.type.includes('image')) {
+                icon.className = 'fas fa-image';
+            } else if (file.type.includes('pdf')) {
+                icon.className = 'fas fa-file-pdf';
+            } else if (file.type.includes('document')) {
+                icon.className = 'fas fa-file-word';
+            } else {
+                icon.className = 'fas fa-file';
+            }
+            icon.style.color = 'var(--accent-primary)';
+
+            const info = document.createElement('span');
+            info.textContent = `${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+            info.style.fontSize = '0.875rem';
+            info.style.color = 'var(--text-secondary)';
+
+            fileItem.appendChild(icon);
+            fileItem.appendChild(info);
+            preview.appendChild(fileItem);
+        });
+    });
+
+    // Initialize form
+    document.addEventListener('DOMContentLoaded', function () {
+        showStep(1);
+
+        // Add event listeners
+        document.getElementById('nextBtn').addEventListener('click', nextStep);
+        document.getElementById('prevBtn').addEventListener('click', prevStep);
+
+        // Validate form on submit
+        document.getElementById('enquiryForm').addEventListener('submit', function (e) {
+            if (!validateStep(3) || !document.getElementById('terms').checked) {
+                e.preventDefault();
+                alert('Please agree to the terms and ensure all information is correct.');
+            }
+        });
+
+        // Auto-format phone number
+        const phoneInput = document.querySelector('input[name="phone"]');
+        phoneInput.addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 10) value = value.substring(0, 10);
+            e.target.value = value;
+        });
+    });
+</script>
+
+<style>
+    .process-step {
+        padding: 1.5rem;
+    }
+
+    .process-icon {
+        width: 80px;
+        height: 80px;
+        background: var(--accent-muted);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+    }
+
+    .review-card {
+        background: var(--bg-input);
+        border: 1px solid var(--border-soft);
+        border-radius: var(--radius-md);
+        padding: 1.5rem;
+    }
+
+    .review-details p {
+        margin-bottom: 0.5rem;
+        color: var(--text-secondary);
+    }
+
+    .review-details strong {
+        color: var(--text-main);
+        min-width: 120px;
+        display: inline-block;
+    }
+
+    .is-invalid {
+        border-color: var(--error) !important;
+    }
+</style>
+{% endblock %}

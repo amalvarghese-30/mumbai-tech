@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" class="industrial-theme">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Mumbai-Tech | Industrial Machinery Parts{% endblock %}</title>
+
+    <!-- Industrial Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- GSAP for precise animations -->
+    <script src="{{ url_for('static', filename='js/gsap.min.js') }}"></script>
+
+    <!-- Main Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block extra_css %}{% endblock %}
+
+    <!-- Favicon matching industrial theme -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+
+<body class="bg-main text-main">
+    <!-- Header -->
+    <header class="industrial-header">
+        <nav class="container">
+            <div class="nav-brand">
+                <a href="{{ url_for('index') }}" class="logo-link">
+                    <img src="{{ url_for('static', filename='logo.png') }}" alt="Mumbai-Tech Industrial Parts"
+                        class="logo-image">
+                </a>
+            </div>
+
+            <div class="nav-menu">
+                <a href="{{ url_for('index') }}" class="nav-link">Home</a>
+                <a href="{{ url_for('categories') }}" class="nav-link">Categories</a>
+                <a href="{{ url_for('all_products') }}" class="nav-link">Products</a>
+                <a href="{{ url_for('about') }}" class="nav-link">About</a>
+                <a href="{{ url_for('enquiry') }}" class="nav-link">Contact</a>
+            </div>
+
+            <div class="nav-cta">
+                <a href="{{ url_for('enquiry') }}" class="btn-primary">
+                    <i class="fas fa-envelope mr-2"></i>Get Quote
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="industrial-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <img src="{{ url_for('static', filename='logo-white.png') }}" alt="Mumbai-Tech" class="footer-logo">
+                    <p class="footer-tagline">
+                        Engineering-grade machinery parts for industrial excellence.
+                    </p>
+                </div>
+
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <a href="{{ url_for('categories') }}">Product Categories</a>
+                    <a href="{{ url_for('enquiry') }}">Request Quote</a>
+                    <a href="{{ url_for('about') }}">About Us</a>
+                </div>
+
+                <div class="footer-contact">
+                    <h4>Contact</h4>
+                    <p><i class="fas fa-phone mr-2"></i> +91 22 1234 5678</p>
+                    <p><i class="fas fa-envelope mr-2"></i> sales@mumbai-tech.com</p>
+                    <p><i class="fas fa-map-marker-alt mr-2"></i> Mumbai, India</p>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2024 Mumbai-Tech. All rights reserved. | Industrial Machinery Parts</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

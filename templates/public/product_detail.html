@@ -1,0 +1,297 @@
+<!-- templates/public/product_detail.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }} | MUMBAI-TECH</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css">
+</head>
+
+<body>
+    <!-- Navigation (Same as index) -->
+    <nav class="premium-nav">...</nav>
+
+    <!-- Product Detail Section -->
+    <section class="section-padded">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="{{ url_for('index') }}">Home</a>
+                <i class="fas fa-chevron-right"></i>
+                <a href="{{ url_for('categories') }}">Categories</a>
+                <i class="fas fa-chevron-right"></i>
+                <a href="{{ url_for('category_products', category_id=product.category_id) }}">
+                    {{ product.category_name }}
+                </a>
+                <i class="fas fa-chevron-right"></i>
+                <span class="current">{{ product.name }}</span>
+            </div>
+
+            <div class="product-detail-grid">
+                <!-- Image Gallery -->
+                <div class="product-gallery">
+                    {% if product.images and product.images|length > 0 %}
+                    <div class="swiper product-main-swiper">
+                        <div class="swiper-wrapper">
+                            {% for image in product.images %}
+                            <div class="swiper-slide">
+                                <img src="{{ url_for('static', filename='uploads/' + image) }}"
+                                    alt="{{ product.name }} - Image {{ loop.index }}" class="product-main-image">
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="swiper-button-next"></div>
+                        <div class="swiper-button-prev"></div>
+                    </div>
+
+                    <div class="swiper product-thumbs-swiper">
+                        <div class="swiper-wrapper">
+                            {% for image in product.images %}
+                            <div class="swiper-slide">
+                                <img src="{{ url_for('static', filename='uploads/' + image) }}"
+                                    alt="Thumbnail {{ loop.index }}">
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="product-image-placeholder-large">
+                        <i class="fas fa-cog"></i>
+                        <span>No image available</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Product Info -->
+                <div class="product-info">
+                    <div class="product-header">
+                        <div class="product-status">
+                            <span class="status-badge status-{{ product.stock_status }}">
+                                {{ product.stock_status|replace('_', ' ')|title }}
+                            </span>
+                            {% if product.is_featured == 'yes' %}
+                            <span class="featured-badge">
+                                <i class="fas fa-star"></i> Featured
+                            </span>
+                            {% endif %}
+                        </div>
+
+                        <h1 class="product-title">{{ product.name }}</h1>
+
+                        <div class="product-meta">
+                            <div class="meta-item">
+                                <i class="fas fa-hashtag"></i>
+                                <strong>Part No:</strong> {{ product.part_number }}
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-industry"></i>
+                                <strong>Manufacturer:</strong> {{ product.manufacturer }}
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-tags"></i>
+                                <strong>Category:</strong> {{ product.category_name }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="product-pricing">
+                        {% if product.price and product.price > 0 %}
+                        <div class="price-section">
+                            <span class="price-label">Estimated Price:</span>
+                            <span class="price-value">₹{{ "%.2f"|format(product.price) }}</span>
+                            <span class="price-note">(Excluding taxes & shipping)</span>
+                        </div>
+                        {% else %}
+                        <div class="price-section">
+                            <span class="price-label">Price:</span>
+                            <span class="price-value">Contact for quote</span>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="product-actions">
+                        <a href="{{ url_for('enquiry', product_id=product._id) }}" class="btn-accent btn-lg action-btn">
+                            <i class="fas fa-envelope mr-2"></i> Request Quote
+                        </a>
+                        <a href="tel:+912212345678" class="btn-premium btn-lg action-btn">
+                            <i class="fas fa-phone mr-2"></i> Call Now
+                        </a>
+                        <button class="btn-premium btn-lg action-btn" onclick="addToFavorites('{{ product._id }}')">
+                            <i class="fas fa-heart mr-2"></i> Save
+                        </button>
+                    </div>
+
+                    <!-- Quick Info -->
+                    <div class="product-quick-info">
+                        <div class="info-card">
+                            <i class="fas fa-shipping-fast"></i>
+                            <div class="info-content">
+                                <h4>Delivery Time</h4>
+                                <p>7-14 business days</p>
+                            </div>
+                        </div>
+                        <div class="info-card">
+                            <i class="fas fa-check-circle"></i>
+                            <div class="info-content">
+                                <h4>Quality Assured</h4>
+                                <p>ISO Certified</p>
+                            </div>
+                        </div>
+                        <div class="info-card">
+                            <i class="fas fa-headset"></i>
+                            <div class="info-content">
+                                <h4>Technical Support</h4>
+                                <p>Available 24/7</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Tabs -->
+            <div class="product-tabs">
+                <nav class="tab-nav">
+                    <button class="tab-btn active" data-tab="specifications">
+                        Specifications
+                    </button>
+                    <button class="tab-btn" data-tab="description">
+                        Description
+                    </button>
+                    <button class="tab-btn" data-tab="compatibility">
+                        Compatibility
+                    </button>
+                    <button class="tab-btn" data-tab="documents">
+                        Documents
+                    </button>
+                </nav>
+
+                <div class="tab-content">
+                    <div class="tab-pane active" id="specifications">
+                        <div class="specs-grid">
+                            {% if product.technical_specs %}
+                            {{ product.technical_specs|safe }}
+                            {% else %}
+                            <div class="specs-table">
+                                <div class="spec-row">
+                                    <div class="spec-label">Material Grade</div>
+                                    <div class="spec-value">High-Strength Steel</div>
+                                </div>
+                                <div class="spec-row">
+                                    <div class="spec-label">Tolerance</div>
+                                    <div class="spec-value">±0.01mm</div>
+                                </div>
+                                <div class="spec-row">
+                                    <div class="spec-label">Surface Treatment</div>
+                                    <div class="spec-value">Zinc Plated</div>
+                                </div>
+                                <div class="spec-row">
+                                    <div class="spec-label">Weight</div>
+                                    <div class="spec-value">Varies by application</div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="description">
+                        <div class="description-content">
+                            {{ product.description|safe }}
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="compatibility">
+                        <div class="compatibility-list">
+                            {% if product.machine_type %}
+                            <h4>Compatible With:</h4>
+                            <ul>
+                                {% for machine in product.machine_type.split(',') %}
+                                <li>{{ machine.strip() }}</li>
+                                {% endfor %}
+                            </ul>
+                            {% else %}
+                            <p>Contact us for compatibility information.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="documents">
+                        <div class="documents-list">
+                            <div class="document-item">
+                                <i class="fas fa-file-pdf"></i>
+                                <div class="document-info">
+                                    <h5>Technical Datasheet</h5>
+                                    <p>Complete specifications and technical details</p>
+                                </div>
+                                <a href="#" class="btn-premium btn-sm">
+                                    <i class="fas fa-download"></i> Download
+                                </a>
+                            </div>
+                            <div class="document-item">
+                                <i class="fas fa-file-alt"></i>
+                                <div class="document-info">
+                                    <h5>Installation Guide</h5>
+                                    <p>Step-by-step installation instructions</p>
+                                </div>
+                                <a href="#" class="btn-premium btn-sm">
+                                    <i class="fas fa-download"></i> Download
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Related Products -->
+            <div class="related-products">
+                <h3 class="section-title-sm">Related Components</h3>
+                <div class="products-grid grid-4">
+                    <!-- Similar products would be loaded here -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="premium-footer">...</footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+    <script>
+        // Initialize Swiper
+        const mainSwiper = new Swiper('.product-main-swiper', {
+            spaceBetween: 10,
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+            thumbs: {
+                swiper: {
+                    el: '.product-thumbs-swiper',
+                    slidesPerView: 4,
+                    spaceBetween: 10,
+                },
+            },
+        });
+
+        // Tab functionality
+        document.querySelectorAll('.tab-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons and panes
+                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+
+                // Add active class to clicked button
+                button.classList.add('active');
+
+                // Show corresponding pane
+                const tabId = button.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+    </script>
+</body>
+
+</html>

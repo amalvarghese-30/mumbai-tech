@@ -1,0 +1,119 @@
+<!-- templates/admin/enquiries.html -->
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Manage Enquiries | Mumbai-Tech Admin{% endblock %}
+
+{% block page_title %}Enquiries Management{% endblock %}
+
+{% block content %}
+<div class="admin-content">
+    <div class="admin-card">
+        <div class="card-header">
+            <h2>All Enquiries</h2>
+
+            <div class="status-filters">
+                <a href="{{ url_for('admin_enquiries', status='all') }}"
+                    class="btn btn-sm {{ 'btn-primary' if current_status == 'all' else 'btn-secondary' }}">
+                    All
+                </a>
+                <a href="{{ url_for('admin_enquiries', status='new') }}"
+                    class="btn btn-sm {{ 'btn-primary' if current_status == 'new' else 'btn-secondary' }}">
+                    New
+                </a>
+                <a href="{{ url_for('admin_enquiries', status='contacted') }}"
+                    class="btn btn-sm {{ 'btn-primary' if current_status == 'contacted' else 'btn-secondary' }}">
+                    Contacted
+                </a>
+                <a href="{{ url_for('admin_enquiries', status='quoted') }}"
+                    class="btn btn-sm {{ 'btn-primary' if current_status == 'quoted' else 'btn-secondary' }}">
+                    Quoted
+                </a>
+                <a href="{{ url_for('admin_enquiries', status='closed') }}"
+                    class="btn btn-sm {{ 'btn-primary' if current_status == 'closed' else 'btn-secondary' }}">
+                    Closed
+                </a>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Product</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for enquiry in enquiries %}
+                        <tr>
+                            <td>{{ enquiry.created_at.strftime('%d-%m-%Y %H:%M') }}</td>
+                            <td>
+                                <strong>{{ enquiry.name }}</strong>
+                                {% if enquiry.company %}
+                                <br><small class="text-muted">{{ enquiry.company }}</small>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="mailto:{{ enquiry.email }}" class="text-primary">
+                                    {{ enquiry.email }}
+                                </a>
+                            </td>
+                            <td>
+                                <a href="tel:{{ enquiry.phone }}" class="text-primary">
+                                    {{ enquiry.phone }}
+                                </a>
+                            </td>
+                            <td>
+                                {% if enquiry.product_name %}
+                                <span class="badge badge-info">{{ enquiry.product_name }}</span>
+                                {% else %}
+                                <span class="text-muted">General Enquiry</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if enquiry.status == 'new' %}
+                                <span class="badge badge-new">New</span>
+                                {% elif enquiry.status == 'contacted' %}
+                                <span class="badge badge-contacted">Contacted</span>
+                                {% elif enquiry.status == 'quoted' %}
+                                <span class="badge badge-quoted">Quoted</span>
+                                {% elif enquiry.status == 'closed' %}
+                                <span class="badge badge-closed">Closed</span>
+                                {% endif %}
+                            </td>
+                            <td class="table-actions">
+                                <a href="{{ url_for('view_enquiry', enquiry_id=enquiry._id) }}"
+                                    class="btn btn-sm btn-view">
+                                    <i class="fas fa-eye"></i> View
+                                </a>
+                                <a href="{{ url_for('update_enquiry_status', enquiry_id=enquiry._id, status='closed') }}"
+                                    class="btn btn-sm btn-danger"
+                                    onclick="return confirm('Mark this enquiry as closed?')">
+                                    <i class="fas fa-times"></i> Close
+                                </a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center py-4">
+                                <div class="empty-state">
+                                    <i class="fas fa-envelope fa-3x mb-3 text-muted"></i>
+                                    <h4>No enquiries found</h4>
+                                    <p>All enquiries will appear here</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

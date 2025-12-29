@@ -1,0 +1,167 @@
+<!-- templates/admin/enquiry_detail.html -->
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Enquiry Details | Mumbai-Tech Admin{% endblock %}
+
+{% block page_title %}Enquiry Details{% endblock %}
+
+{% block content %}
+<div class="admin-content">
+    <div class="admin-card">
+        <div class="card-header">
+            <h2>Enquiry #{{ enquiry._id|string|truncate(8) }}</h2>
+            <a href="{{ url_for('admin_enquiries') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left mr-2"></i>Back to Enquiries
+            </a>
+        </div>
+
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <!-- Enquiry Details -->
+                    <div class="detail-section">
+                        <h4>Enquiry Details</h4>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <label>Date & Time:</label>
+                                <span>{{ enquiry.created_at.strftime('%d %B %Y, %I:%M %p') }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>Status:</label>
+                                <span class="status-badge status-{{ enquiry.status }}">
+                                    {{ enquiry.status|title }}
+                                </span>
+                            </div>
+                            <div class="detail-item">
+                                <label>Name:</label>
+                                <span>{{ enquiry.name }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>Email:</label>
+                                <a href="mailto:{{ enquiry.email }}">{{ enquiry.email }}</a>
+                            </div>
+                            <div class="detail-item">
+                                <label>Phone:</label>
+                                <a href="tel:{{ enquiry.phone }}">{{ enquiry.phone }}</a>
+                            </div>
+                            {% if enquiry.company %}
+                            <div class="detail-item">
+                                <label>Company:</label>
+                                <span>{{ enquiry.company }}</span>
+                            </div>
+                            {% endif %}
+                            {% if enquiry.ip_address %}
+                            <div class="detail-item">
+                                <label>IP Address:</label>
+                                <span>{{ enquiry.ip_address }}</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Message -->
+                    <div class="detail-section">
+                        <h4>Message</h4>
+                        <div class="message-box">
+                            {{ enquiry.message|nl2br }}
+                        </div>
+                    </div>
+
+                    <!-- Product Info -->
+                    {% if product %}
+                    <div class="detail-section">
+                        <h4>Product Information</h4>
+                        <div class="product-info-card">
+                            <div class="product-info-header">
+                                <h5>{{ product.name }}</h5>
+                                <span class="product-sku">SKU: {{ product.part_number }}</span>
+                            </div>
+                            <div class="product-info-details">
+                                <p><strong>Manufacturer:</strong> {{ product.manufacturer }}</p>
+                                <p><strong>Category:</strong> {{ product.category_name }}</p>
+                                {% if product.price and product.price > 0 %}
+                                <p><strong>Price:</strong> ₹{{ "%.2f"|format(product.price) }}</p>
+                                {% endif %}
+                            </div>
+                            <a href="{{ url_for('product_detail', product_id=product._id) }}" target="_blank"
+                                class="btn btn-sm btn-primary">
+                                <i class="fas fa-external-link-alt mr-1"></i>View Product
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="col-md-4">
+                    <!-- Actions -->
+                    <div class="actions-card">
+                        <h4>Quick Actions</h4>
+
+                        <!-- Status Update -->
+                        <div class="status-actions">
+                            <h5>Update Status</h5>
+                            <div class="btn-group-vertical w-100">
+                                <a href="{{ url_for('update_enquiry_status', enquiry_id=enquiry._id, status='contacted') }}"
+                                    class="btn btn-outline-warning text-left {{ 'active' if enquiry.status == 'contacted' }}">
+                                    <i class="fas fa-phone mr-2"></i>Mark as Contacted
+                                </a>
+                                <a href="{{ url_for('update_enquiry_status', enquiry_id=enquiry._id, status='quoted') }}"
+                                    class="btn btn-outline-success text-left {{ 'active' if enquiry.status == 'quoted' }}">
+                                    <i class="fas fa-file-invoice-dollar mr-2"></i>Mark as Quoted
+                                </a>
+                                <a href="{{ url_for('update_enquiry_status', enquiry_id=enquiry._id, status='closed') }}"
+                                    class="btn btn-outline-danger text-left {{ 'active' if enquiry.status == 'closed' }}">
+                                    <i class="fas fa-times-circle mr-2"></i>Mark as Closed
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Contact Actions -->
+                        <div class="contact-actions mt-4">
+                            <h5>Contact Customer</h5>
+                            <div class="btn-group-vertical w-100">
+                                <a href="mailto:{{ enquiry.email }}" class="btn btn-outline-primary text-left">
+                                    <i class="fas fa-envelope mr-2"></i>Send Email
+                                </a>
+                                <a href="tel:{{ enquiry.phone }}" class="btn btn-outline-primary text-left">
+                                    <i class="fas fa-phone mr-2"></i>Call Customer
+                                </a>
+                                <button class="btn btn-outline-primary text-left" onclick="copyEmail()">
+                                    <i class="fas fa-copy mr-2"></i>Copy Email
+                                </button>
+                                <button class="btn btn-outline-primary text-left" onclick="copyPhone()">
+                                    <i class="fas fa-copy mr-2"></i>Copy Phone
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Notes -->
+                        <div class="notes-section mt-4">
+                            <h5>Add Internal Note</h5>
+                            <textarea class="form-control mb-2" rows="3"
+                                placeholder="Add internal notes about this enquiry..."></textarea>
+                            <button class="btn btn-primary btn-sm w-100">
+                                <i class="fas fa-save mr-2"></i>Save Note
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function copyEmail() {
+        navigator.clipboard.writeText("{{ enquiry.email }}")
+            .then(() => alert("Email copied to clipboard!"))
+            .catch(err => console.error("Failed to copy:", err));
+    }
+
+    function copyPhone() {
+        navigator.clipboard.writeText("{{ enquiry.phone }}")
+            .then(() => alert("Phone number copied to clipboard!"))
+            .catch(err => console.error("Failed to copy:", err));
+    }
+</script>
+{% endblock %}

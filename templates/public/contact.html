@@ -1,0 +1,660 @@
+<!-- templates/public/contact.html -->
+{% extends "base.html" %}
+
+{% block title %}Contact Us | Mumbai-Tech Industrial Parts{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-contact {
+        background: linear-gradient(rgba(14, 14, 14, 0.9), rgba(14, 14, 14, 0.95)),
+        url("{{ url_for('static', filename='images/contact-hero.jpg') }}");
+        background-size: cover;
+        background-position: center;
+        padding: 6rem 0 4rem;
+        text-align: center;
+    }
+
+    .hero-contact h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .hero-contact .subtitle {
+        font-size: 1.25rem;
+        color: var(--text-secondary);
+        max-width: 700px;
+        margin: 0 auto 2rem;
+        line-height: 1.6;
+    }
+
+    .contact-section {
+        padding: 4rem 0;
+    }
+
+    .contact-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 3rem;
+        margin-bottom: 4rem;
+    }
+
+    .contact-info-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-soft);
+        border-radius: var(--radius-lg);
+        padding: 2.5rem;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .contact-info-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--accent-primary);
+        box-shadow: var(--shadow-md);
+    }
+
+    .contact-icon {
+        width: 70px;
+        height: 70px;
+        background: var(--accent-muted);
+        border-radius: var(--radius-lg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+    }
+
+    .contact-icon i {
+        font-size: 2rem;
+        color: var(--accent-primary);
+    }
+
+    .contact-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: var(--text-main);
+    }
+
+    .contact-details {
+        color: var(--text-secondary);
+        line-height: 1.6;
+    }
+
+    .contact-details a {
+        color: var(--accent-primary);
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .contact-details a:hover {
+        color: var(--accent-hover);
+        text-decoration: underline;
+    }
+
+    .map-container {
+        height: 400px;
+        background: var(--bg-input);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        margin-bottom: 4rem;
+        border: 1px solid var(--border-soft);
+    }
+
+    .map-placeholder {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-secondary);
+    }
+
+    .map-placeholder i {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        color: var(--accent-primary);
+    }
+
+    .team-section {
+        background: var(--bg-elevated);
+        padding: 4rem 0;
+    }
+
+    .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    .team-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-soft);
+        border-radius: var(--radius-lg);
+        padding: 2rem;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .team-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--accent-primary);
+        box-shadow: var(--shadow-md);
+    }
+
+    .team-avatar {
+        width: 100px;
+        height: 100px;
+        background: var(--accent-muted);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+    }
+
+    .team-avatar i {
+        font-size: 3rem;
+        color: var(--accent-primary);
+    }
+
+    .team-name {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--text-main);
+    }
+
+    .team-role {
+        color: var(--accent-primary);
+        font-weight: 500;
+        margin-bottom: 1rem;
+    }
+
+    .team-contact {
+        color: var(--text-secondary);
+        font-size: 0.9375rem;
+    }
+
+    .faq-section {
+        padding: 4rem 0;
+    }
+
+    .faq-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .faq-item {
+        background: var(--bg-card);
+        border: 1px solid var(--border-soft);
+        border-radius: var(--radius-lg);
+        margin-bottom: 1rem;
+        overflow: hidden;
+    }
+
+    .faq-question {
+        padding: 1.5rem;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: var(--text-main);
+        transition: background 0.3s ease;
+    }
+
+    .faq-question:hover {
+        background: var(--accent-muted);
+    }
+
+    .faq-question i {
+        transition: transform 0.3s ease;
+    }
+
+    .faq-answer {
+        padding: 0 1.5rem;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease, padding 0.3s ease;
+        color: var(--text-secondary);
+        line-height: 1.6;
+    }
+
+    .faq-item.active .faq-answer {
+        padding: 0 1.5rem 1.5rem;
+        max-height: 500px;
+    }
+
+    .faq-item.active .faq-question i {
+        transform: rotate(180deg);
+    }
+
+    @media (max-width: 768px) {
+        .hero-contact h1 {
+            font-size: 2.25rem;
+        }
+
+        .hero-contact .subtitle {
+            font-size: 1.125rem;
+        }
+
+        .contact-info-card {
+            padding: 2rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-contact">
+    <div class="container">
+        <h1>Connect With Mumbai-Tech</h1>
+        <p class="subtitle">
+            Your trusted partner for industrial machinery parts. Get in touch with our team
+            for technical support, quotations, and procurement assistance.
+        </p>
+        <div class="contact-cta">
+            <a href="#contact-form" class="btn btn-primary btn-lg mr-3">
+                <i class="fas fa-envelope mr-2"></i>Send Message
+            </a>
+            <a href="tel:+912212345678" class="btn btn-outline btn-lg">
+                <i class="fas fa-phone mr-2"></i>Call Now
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Info -->
+<section class="contact-section">
+    <div class="container">
+        <div class="text-center mb-6">
+            <h2 class="section-title">Get In Touch</h2>
+            <p class="section-subtitle" style="max-width: 700px; margin: 0 auto;">
+                Multiple ways to connect with our industrial parts specialists
+            </p>
+        </div>
+
+        <div class="contact-grid">
+            <div class="contact-info-card">
+                <div class="contact-icon">
+                    <i class="fas fa-phone-alt"></i>
+                </div>
+                <h3 class="contact-title">Phone Support</h3>
+                <div class="contact-details">
+                    <p><strong>Sales & Quotations:</strong></p>
+                    <p>
+                        <a href="tel:+912212345678">+91 22 1234 5678</a><br>
+                        <small>Mon-Sat: 9:00 AM - 7:00 PM</small>
+                    </p>
+                    <p class="mt-3"><strong>Technical Support:</strong></p>
+                    <p>
+                        <a href="tel:+912212345679">+91 22 1234 5679</a><br>
+                        <small>24/7 Emergency Support</small>
+                    </p>
+                </div>
+            </div>
+
+            <div class="contact-info-card">
+                <div class="contact-icon">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <h3 class="contact-title">Email</h3>
+                <div class="contact-details">
+                    <p><strong>General Inquiries:</strong></p>
+                    <p><a href="mailto:info@mumbai-tech.com">info@mumbai-tech.com</a></p>
+                    <p class="mt-3"><strong>Sales & Quotations:</strong></p>
+                    <p><a href="mailto:sales@mumbai-tech.com">sales@mumbai-tech.com</a></p>
+                    <p class="mt-3"><strong>Technical Support:</strong></p>
+                    <p><a href="mailto:support@mumbai-tech.com">support@mumbai-tech.com</a></p>
+                </div>
+            </div>
+
+            <div class="contact-info-card">
+                <div class="contact-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <h3 class="contact-title">Visit Us</h3>
+                <div class="contact-details">
+                    <p><strong>Head Office:</strong></p>
+                    <p>
+                        Mumbai-Tech Industrial Parts<br>
+                        Plot No. 123, Industrial Area<br>
+                        Andheri East, Mumbai<br>
+                        Maharashtra 400069<br>
+                        India
+                    </p>
+                    <p class="mt-3"><strong>Warehouse:</strong></p>
+                    <p>
+                        Bhiwandi Warehouse Complex<br>
+                        Near Mumbai-Nashik Highway<br>
+                        Thane, Maharashtra 421302
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Map -->
+        <div class="map-container">
+            <div class="map-placeholder">
+                <i class="fas fa-map-marked-alt"></i>
+                <h3>Mumbai-Tech Location</h3>
+                <p>Plot No. 123, Industrial Area, Andheri East, Mumbai</p>
+                <a href="https://maps.google.com/?q=Mumbai+Tech+Industrial+Parts+Andheri+East+Mumbai" target="_blank"
+                    class="btn btn-primary mt-3">
+                    <i class="fas fa-directions mr-2"></i>Get Directions
+                </a>
+            </div>
+        </div>
+
+        <!-- Contact Form -->
+        <div class="contact-form-section" id="contact-form">
+            <div class="text-center mb-6">
+                <h2 class="section-title">Send Us a Message</h2>
+                <p class="section-subtitle" style="max-width: 700px; margin: 0 auto;">
+                    Fill out the form below and our team will get back to you within 24 hours
+                </p>
+            </div>
+
+            <div class="premium-card">
+                <form method="POST" action="{{ url_for('enquiry') }}" class="premium-form">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Your Name *</label>
+                                <input type="text" name="name" class="form-control" required
+                                    placeholder="Enter your full name">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Email Address *</label>
+                                <input type="email" name="email" class="form-control" required
+                                    placeholder="Enter your email">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Phone Number *</label>
+                                <input type="tel" name="phone" class="form-control" required
+                                    placeholder="Enter your phone number">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Company Name</label>
+                                <input type="text" name="company" class="form-control"
+                                    placeholder="Enter company name (optional)">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Subject *</label>
+                        <select name="subject" class="form-control" required>
+                            <option value="">Select a subject</option>
+                            <option value="quotation">Request for Quotation</option>
+                            <option value="technical">Technical Support</option>
+                            <option value="product">Product Information</option>
+                            <option value="bulk">Bulk Procurement</option>
+                            <option value="other">Other Inquiry</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Your Message *</label>
+                        <textarea name="message" class="form-control" rows="6" required
+                            placeholder="Please provide details about your inquiry..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="newsletter" name="newsletter">
+                            <label class="form-check-label" for="newsletter">
+                                Subscribe to our newsletter for updates on new products and offers
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-actions text-center">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-paper-plane mr-2"></i>Send Message
+                        </button>
+                        <button type="reset" class="btn btn-secondary">
+                            Clear Form
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Support Team -->
+<section class="team-section">
+    <div class="container">
+        <div class="text-center mb-6">
+            <h2 class="section-title">Our Support Team</h2>
+            <p class="section-subtitle" style="max-width: 700px; margin: 0 auto;">
+                Dedicated professionals ready to assist with your industrial needs
+            </p>
+        </div>
+
+        <div class="team-grid">
+            <div class="team-card">
+                <div class="team-avatar">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <h3 class="team-name">Rahul Mehta</h3>
+                <div class="team-role">Sales Manager</div>
+                <div class="team-contact">
+                    <p><i class="fas fa-phone mr-2"></i> +91 98765 43210</p>
+                    <p><i class="fas fa-envelope mr-2"></i> rahul@mumbai-tech.com</p>
+                </div>
+            </div>
+
+            <div class="team-card">
+                <div class="team-avatar">
+                    <i class="fas fa-user-cog"></i>
+                </div>
+                <h3 class="team-name">Anjali Singh</h3>
+                <div class="team-role">Technical Specialist</div>
+                <div class="team-contact">
+                    <p><i class="fas fa-phone mr-2"></i> +91 98765 43211</p>
+                    <p><i class="fas fa-envelope mr-2"></i> anjali@mumbai-tech.com</p>
+                </div>
+            </div>
+
+            <div class="team-card">
+                <div class="team-avatar">
+                    <i class="fas fa-user-headset"></i>
+                </div>
+                <h3 class="team-name">Vikram Patel</h3>
+                <div class="team-role">Customer Support</div>
+                <div class="team-contact">
+                    <p><i class="fas fa-phone mr-2"></i> +91 98765 43212</p>
+                    <p><i class="fas fa-envelope mr-2"></i> vikram@mumbai-tech.com</p>
+                </div>
+            </div>
+
+            <div class="team-card">
+                <div class="team-avatar">
+                    <i class="fas fa-user-check"></i>
+                </div>
+                <h3 class="team-name">Sneha Reddy</h3>
+                <div class="team-role">Procurement Manager</div>
+                <div class="team-contact">
+                    <p><i class="fas fa-phone mr-2"></i> +91 98765 43213</p>
+                    <p><i class="fas fa-envelope mr-2"></i> sneha@mumbai-tech.com</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section">
+    <div class="container">
+        <div class="text-center mb-6">
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            <p class="section-subtitle" style="max-width: 700px; margin: 0 auto;">
+                Quick answers to common questions about our products and services
+            </p>
+        </div>
+
+        <div class="faq-container">
+            <div class="faq-item">
+                <div class="faq-question">
+                    What is your minimum order quantity?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    We offer flexible MOQs depending on the product and availability. For standard items,
+                    MOQ is typically 1 piece. For bulk orders and customized components, please contact
+                    our sales team for specific requirements.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    What are your delivery timelines?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    Standard delivery: 7-14 business days for in-stock items. Express delivery: 3-5 business
+                    days (additional charges apply). For custom components: 4-6 weeks depending on complexity
+                    and manufacturing requirements.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    Do you provide technical specifications and drawings?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    Yes, we provide complete technical datasheets, CAD drawings, and 3D models for all our
+                    products. These can be downloaded from the product pages or requested from our technical
+                    support team.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    What is your warranty policy?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    We offer a standard 12-month warranty on all products against manufacturing defects.
+                    For specific warranty terms and conditions, please refer to our warranty documentation
+                    or contact our support team.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    Do you accept custom orders?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    Yes, we specialize in custom-engineered components. Our technical team can work with
+                    you to design and manufacture parts according to your specifications. Contact us with
+                    your requirements for a customized solution.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    What payment methods do you accept?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    We accept bank transfers, cheques, and online payments. For corporate clients, we offer
+                    credit facilities subject to approval. International payments can be made via wire transfer.
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="section-cta py-6">
+    <div class="container">
+        <div class="cta-content text-center">
+            <h2 class="cta-title">Ready to Get Started?</h2>
+            <p class="cta-text">
+                Contact our team today for personalized industrial solutions and expert guidance.
+            </p>
+            <div class="cta-actions">
+                <a href="tel:+912212345678" class="btn btn-primary btn-lg mr-3">
+                    <i class="fas fa-phone mr-2"></i>Call Now
+                </a>
+                <a href="mailto:sales@mumbai-tech.com" class="btn btn-outline btn-lg">
+                    <i class="fas fa-envelope mr-2"></i>Email Us
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // FAQ functionality
+    document.querySelectorAll('.faq-question').forEach(question => {
+        question.addEventListener('click', () => {
+            const item = question.parentElement;
+            item.classList.toggle('active');
+        });
+    });
+
+    // Form validation
+    const contactForm = document.querySelector('.premium-form');
+    if (contactForm) {
+        contactForm.addEventListener('submit', function (e) {
+            const phoneInput = this.querySelector('input[name="phone"]');
+            const phoneValue = phoneInput.value.trim();
+
+            // Basic phone validation for Indian numbers
+            const phoneRegex = /^[6-9]\d{9}$/;
+            const cleanedPhone = phoneValue.replace(/\D/g, '');
+
+            if (cleanedPhone.length !== 10 || !phoneRegex.test(cleanedPhone)) {
+                e.preventDefault();
+                alert('Please enter a valid 10-digit Indian phone number');
+                phoneInput.focus();
+                return false;
+            }
+        });
+    }
+
+    // Animate contact cards on scroll
+    document.addEventListener('DOMContentLoaded', function () {
+        const contactCards = document.querySelectorAll('.contact-info-card');
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }, index * 100);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        contactCards.forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            observer.observe(card);
+        });
+    });
+</script>
+{% endblock %}

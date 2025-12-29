@@ -1,0 +1,286 @@
+{% extends "base.html" %}
+
+{% block title %}Industrial Machinery Parts | Mumbai-Tech{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        background: linear-gradient(rgba(14, 14, 14, 0.9), rgba(14, 14, 14, 0.95)),
+        url("{{ url_for('static', filename='images/hero-bg.jpg') }}");
+        background-size: cover;
+        background-position: center;
+        padding: 8rem 0;
+        position: relative;
+    }
+
+    .hero-title {
+        font-family: 'IBM Plex Sans', sans-serif;
+        font-weight: 700;
+        font-size: 3.5rem;
+        line-height: 1.1;
+        margin-bottom: 1.5rem;
+    }
+
+    .hero-accent {
+        color: var(--accent-primary);
+        position: relative;
+    }
+
+    .hero-accent::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: var(--accent-primary);
+    }
+
+    .category-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+    }
+
+    .category-card {
+        background: var(--bg-soft);
+        border: 1px solid var(--border-soft);
+        border-radius: var(--radius-md);
+        padding: 2rem;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .category-card:hover {
+        border-color: var(--accent-primary);
+        transform: translateY(-8px);
+    }
+
+    .category-icon {
+        font-size: 3rem;
+        color: var(--accent-primary);
+        margin-bottom: 1.5rem;
+    }
+
+    .featured-products {
+        background: var(--bg-elevated);
+        padding: 5rem 0;
+    }
+
+    .section-title {
+        font-family: 'IBM Plex Sans', sans-serif;
+        font-weight: 700;
+        font-size: 2.5rem;
+        text-align: center;
+        margin-bottom: 3rem;
+        position: relative;
+    }
+
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: var(--accent-primary);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="hero-content">
+            <h1 class="hero-title">
+                Engineering-Grade <span class="hero-accent">Machinery Parts</span><br>
+                For Industrial Excellence
+            </h1>
+            <p class="text-secondary" style="font-size: 1.25rem; max-width: 700px; margin-bottom: 2.5rem;">
+                Precision-engineered components for construction, manufacturing, and heavy machinery.
+                Trusted by industry leaders across India.
+            </p>
+            <div class="hero-cta">
+                <a href="{{ url_for('all_products') }}" class="btn-primary btn-lg mr-3">
+                    <i class="fas fa-cogs mr-2"></i>Browse Products
+                </a>
+                <a href="{{ url_for('enquiry') }}" class="btn-outline btn-lg">
+                    <i class="fas fa-quote-right mr-2"></i>Get Custom Quote
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="container py-6">
+    <h2 class="section-title">Product Categories</h2>
+    <div class="category-grid">
+        {% for category in categories %}
+        <a href="{{ url_for('category_products', category_id=category._id) }}" class="category-card">
+            <div class="category-icon">
+                <i class="{{ category.icon_class or 'fas fa-cog' }}"></i>
+            </div>
+            <h3 class="category-name" style="font-weight: 600; margin-bottom: 0.5rem;">
+                {{ category.name }}
+            </h3>
+            <p class="text-secondary" style="font-size: 0.9rem;">
+                {{ category.description or 'Industrial machinery components' }}
+            </p>
+        </a>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Featured Products -->
+<section class="featured-products">
+    <div class="container">
+        <h2 class="section-title">Featured Products</h2>
+        <div class="product-grid"
+            style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem;">
+            {% for product in featured_products %}
+            <div class="card product-card">
+                {% if product.images and product.images|length > 0 %}
+                <img src="{{ url_for('static', filename='uploads/' + product.images[0]) }}" alt="{{ product.name }}"
+                    class="product-image">
+                {% else %}
+                <div class="product-image" style="display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-cog" style="font-size: 3rem; color: var(--border-medium);"></i>
+                </div>
+                {% endif %}
+
+                <div class="product-details">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h3 class="product-title">{{ product.name }}</h3>
+                        {% if product.is_featured == 'yes' %}
+                        <span class="badge badge-featured">Featured</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <span class="product-sku">SKU: {{ product.part_number }}</span>
+                    </div>
+
+                    <p class="product-specs">{{ product.description[:100] }}...</p>
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <span class="product-price">₹{{ "%.2f"|format(product.price) }}</span>
+                        </div>
+                        <div>
+                            {% if product.stock_status == 'in_stock' %}
+                            <span class="badge badge-stock">In Stock</span>
+                            {% elif product.stock_status == 'limited' %}
+                            <span class="badge badge-warning">Limited</span>
+                            {% else %}
+                            <span class="badge badge-error">Out of Stock</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <a href="{{ url_for('product_detail', product_id=product._id) }}"
+                            class="btn-secondary flex-grow-1 text-center">
+                            View Details
+                        </a>
+                        <a href="{{ url_for('enquiry', product_id=product._id) }}"
+                            class="btn-primary flex-grow-1 text-center">
+                            Enquire
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="text-center mt-5">
+            <a href="{{ url_for('all_products') }}" class="btn-outline btn-lg">
+                View All Products <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="container py-6">
+    <div
+        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; text-align: center;">
+        <div class="stat-item">
+            <div class="stat-number" style="font-size: 3rem; font-weight: 700; color: var(--accent-primary);">
+                {{ stats.total_products|default('500+') }}
+            </div>
+            <div class="stat-label" style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem;">
+                Products
+            </div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number" style="font-size: 3rem; font-weight: 700; color: var(--accent-primary);">
+                {{ stats.total_categories|default('25+') }}
+            </div>
+            <div class="stat-label" style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem;">
+                Categories
+            </div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number" style="font-size: 3rem; font-weight: 700; color: var(--accent-primary);">
+                15+
+            </div>
+            <div class="stat-label" style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem;">
+                Years Experience
+            </div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number" style="font-size: 3rem; font-weight: 700; color: var(--accent-primary);">
+                100+
+            </div>
+            <div class="stat-label" style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem;">
+                Clients
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // GSAP animations for industrial feel
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Hero title animation
+    gsap.from('.hero-title', {
+        duration: 1,
+        y: 50,
+        opacity: 0,
+        ease: 'power3.out'
+    });
+
+    // Category cards animation
+    gsap.from('.category-card', {
+        scrollTrigger: {
+            trigger: '.category-grid',
+            start: 'top 80%',
+        },
+        duration: 0.8,
+        y: 30,
+        opacity: 0,
+        stagger: 0.1,
+        ease: 'power2.out'
+    });
+
+    // Product cards animation
+    gsap.from('.product-card', {
+        scrollTrigger: {
+            trigger: '.product-grid',
+            start: 'top 80%',
+        },
+        duration: 0.8,
+        y: 30,
+        opacity: 0,
+        stagger: 0.1,
+        ease: 'power2.out'
+    });
+</script>
+{% endblock %}

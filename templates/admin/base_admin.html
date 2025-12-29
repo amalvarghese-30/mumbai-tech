@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en" class="industrial-admin">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Mumbai-Tech Admin{% endblock %}</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        .badge-pulse {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: #fff;
+            border-radius: 50%;
+            margin-left: 4px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .badge-error {
+            background-color: #ef4444;
+            color: white;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            margin-left: 0.5rem;
+        }
+
+        /* Activity Log Styles */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #2a2d32;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .timeline-icon {
+            position: absolute;
+            left: -30px;
+            top: 0;
+            width: 30px;
+            height: 30px;
+            background: #1a1d21;
+            border: 2px solid #2a2d32;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+        }
+
+        .timeline-content {
+            background: #1a1d21;
+            border: 1px solid #2a2d32;
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-left: 1rem;
+        }
+
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-header h5 {
+            margin: 0;
+            font-size: 1rem;
+            color: #f5f5f5;
+        }
+
+        .timeline-time {
+            font-size: 0.875rem;
+            color: #8b939c;
+            white-space: nowrap;
+            margin-left: 1rem;
+        }
+
+        .activity-meta {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
+        }
+
+        .activity-meta .badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            background: #2a2d32;
+            color: #b0b0b0;
+            border: none;
+        }
+    </style>
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="admin-body">
+    <!-- Admin Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <div class="admin-logo">
+                <img src="{{ url_for('static', filename='LOGO.JPEG') }}" alt="Mumbai-Tech Admin" class="logo-image"
+                    style="height: 32px;">
+                <span class="logo-text">ADMIN</span>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="{{ url_for('admin_dashboard') }}"
+                class="nav-item {% if request.endpoint == 'admin_dashboard' %}active{% endif %}">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <div class="nav-section">
+                <div class="section-label">Products</div>
+                <a href="{{ url_for('admin_products') }}"
+                    class="nav-item {% if request.endpoint == 'admin_products' %}active{% endif %}">
+                    <i class="fas fa-boxes"></i>
+                    <span>All Products</span>
+                </a>
+                <a href="{{ url_for('add_product') }}"
+                    class="nav-item {% if request.endpoint == 'add_product' %}active{% endif %}">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Add Product</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="section-label">Categories</div>
+                <a href="{{ url_for('admin_categories') }}"
+                    class="nav-item {% if request.endpoint == 'admin_categories' %}active{% endif %}">
+                    <i class="fas fa-tags"></i>
+                    <span>Manage Categories</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="section-label">Enquiries</div>
+                <a href="{{ url_for('admin_enquiries') }}"
+                    class="nav-item {% if request.endpoint == 'admin_enquiries' %}active{% endif %}"
+                    id="enquiries-link">
+                    <i class="fas fa-envelope"></i>
+                    <span>Enquiries</span>
+                    {% if stats and stats.get('new_enquiries', 0) > 0 %}
+                    <span class="badge badge-error" id="enquiry-badge">
+                        {{ stats.get('new_enquiries', 0) }}
+                        <span class="badge-pulse"></span>
+                    </span>
+                    {% endif %}
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="section-label">Activity</div>
+                <a href="{{ url_for('admin_activities') }}"
+                    class="nav-item {% if request.endpoint == 'admin_activities' %}active{% endif %}">
+                    <i class="fas fa-history"></i>
+                    <span>Activity Log</span>
+                </a>
+            </div>
+
+            <div class="nav-section mt-auto">
+                <a href="{{ url_for('admin_logout') }}" class="nav-item logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <!-- Top Bar -->
+        <header class="admin-topbar">
+            <div class="topbar-left">
+                <button class="sidebar-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="page-title">{% block page_title %}Dashboard{% endblock %}</h1>
+            </div>
+
+            <div class="topbar-right">
+                <div class="user-info">
+                    <span class="username">{{ current_user.username if current_user.is_authenticated else 'Guest'
+                        }}</span>
+                    <span class="user-role">{{ current_user.role if current_user.is_authenticated else 'Admin' }}</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content Area -->
+        <div class="admin-content">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category if category != 'error' else 'danger' }} mb-4">
+                {{ message }}
+                <button type="button" class="float-right" onclick="this.parentElement.remove()"
+                    style="background:none;border:none;color:inherit;cursor:pointer;font-size:1.25rem;line-height:1;">&times;</button>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <script>
+        // Toggle sidebar on mobile
+        function toggleSidebar() {
+            document.querySelector('.admin-sidebar').classList.toggle('active');
+        }
+
+        // Update enquiry badge in real-time
+        function updateEnquiryBadge() {
+            fetch('/api/admin/new-enquiries-count')
+                .then(response => response.json())
+                .then(data => {
+                    const badge = document.getElementById('enquiry-badge');
+                    const count = data.count || 0;
+
+                    if (count > 0) {
+                        if (!badge) {
+                            // Create badge if it doesn't exist
+                            const newBadge = document.createElement('span');
+                            newBadge.id = 'enquiry-badge';
+                            newBadge.className = 'badge badge-error';
+                            newBadge.innerHTML = `${count} <span class="badge-pulse"></span>`;
+                            document.getElementById('enquiries-link').appendChild(newBadge);
+                        } else {
+                            // Update existing badge
+                            badge.innerHTML = `${count} <span class="badge-pulse"></span>`;
+                        }
+                    } else {
+                        // Remove badge if no new enquiries
+                        if (badge) badge.remove();
+                    }
+                })
+                .catch(error => console.log('Could not update stats:', error));
+        }
+
+        // Update every 30 seconds
+        setInterval(updateEnquiryBadge, 30000);
+
+        // Update immediately on page load
+        document.addEventListener('DOMContentLoaded', updateEnquiryBadge);
+
+        // Close flash messages when clicked
+        document.addEventListener('click', function (e) {
+            if (e.target.classList.contains('flash-close')) {
+                e.target.parentElement.remove();
+            }
+        });
+    </script>
+
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

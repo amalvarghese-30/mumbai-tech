@@ -1,0 +1,637 @@
+<!-- templates/public/category_products.html -->
+{% extends "base.html" %}
+
+{% block title %}{{ category.name }} | Mumbai-Tech Industrial Parts{% endblock %}
+
+{% block extra_css %}
+<style>
+    .category-header {
+        background: linear-gradient(rgba(14, 14, 14, 0.9), rgba(14, 14, 14, 0.95)),
+        url("{{ url_for('static', filename='images/category-bg.jpg') }}");
+        background-size: cover;
+        background-position: center;
+        padding: 5rem 0 3rem;
+        margin-bottom: 3rem;
+    }
+
+    .category-breadcrumb {
+        margin-bottom: 2rem;
+    }
+
+    .category-title-section {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .category-icon-large {
+        font-size: 4rem;
+        color: var(--accent-primary);
+        margin-bottom: 1.5rem;
+    }
+
+    .category-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .category-description-full {
+        font-size: 1.125rem;
+        color: var(--text-secondary);
+        max-width: 800px;
+        margin: 0 auto 2rem;
+        line-height: 1.6;
+    }
+
+    .category-meta {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .meta-item {
+        text-align: center;
+    }
+
+    .meta-number {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--accent-primary);
+    }
+
+    .meta-label {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .products-section {
+        padding: 2rem 0;
+    }
+
+    .filter-section {
+        background: var(--bg-card);
+        border: 1px solid var(--border-soft);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .filter-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .filter-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .filter-results {
+        color: var(--text-secondary);
+        font-size: 0.9375rem;
+    }
+
+    .filter-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .filter-group-title {
+        font-size: 0.9375rem;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        color: var(--text-main);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .filter-options {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .filter-option {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+    }
+
+    .filter-option input {
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+    }
+
+    .filter-option label {
+        cursor: pointer;
+        font-size: 0.9375rem;
+        color: var(--text-secondary);
+    }
+
+    .filter-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+
+    .empty-products {
+        text-align: center;
+        padding: 4rem 2rem;
+    }
+
+    .empty-icon {
+        font-size: 4rem;
+        color: var(--border-medium);
+        margin-bottom: 1.5rem;
+    }
+
+    .pagination-container {
+        margin-top: 3rem;
+        display: flex;
+        justify-content: center;
+    }
+
+    @media (max-width: 768px) {
+        .category-title {
+            font-size: 2rem;
+        }
+
+        .category-description-full {
+            font-size: 1rem;
+        }
+
+        .category-meta {
+            gap: 1rem;
+        }
+
+        .filter-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Category Header -->
+<section class="category-header">
+    <div class="container">
+        <div class="category-breadcrumb">
+            <nav class="breadcrumb">
+                <a href="{{ url_for('index') }}">Home</a>
+                <i class="fas fa-chevron-right"></i>
+                <a href="{{ url_for('categories') }}">Categories</a>
+                <i class="fas fa-chevron-right"></i>
+                <span class="current">{{ category.name }}</span>
+            </nav>
+        </div>
+
+        <div class="category-title-section">
+            <div class="category-icon-large">
+                <i class="{{ category.icon_class or 'fas fa-cog' }}"></i>
+            </div>
+            <h1 class="category-title">{{ category.name }}</h1>
+            <p class="category-description-full">
+                {{ category.description or 'High-quality components designed for industrial machinery and equipment.
+                Precision engineered for reliability and performance.' }}
+            </p>
+            <div class="category-meta">
+                <div class="meta-item">
+                    <div class="meta-number">{{ products|length }}</div>
+                    <div class="meta-label">Products</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-number">15+</div>
+                    <div class="meta-label">Years Experience</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-number">24/7</div>
+                    <div class="meta-label">Support</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Products Section -->
+<section class="products-section">
+    <div class="container">
+        <div class="row">
+            <!-- Filters Sidebar -->
+            <div class="col-md-3">
+                <div class="filter-section">
+                    <div class="filter-header">
+                        <h3 class="filter-title">Filters</h3>
+                        <div class="filter-results">
+                            {{ products|length }} products
+                        </div>
+                    </div>
+
+                    <!-- Stock Status Filter -->
+                    <div class="filter-group">
+                        <h4 class="filter-group-title">Stock Status</h4>
+                        <div class="filter-options">
+                            <div class="filter-option">
+                                <input type="checkbox" id="stock-in-stock" checked>
+                                <label for="stock-in-stock">In Stock</label>
+                            </div>
+                            <div class="filter-option">
+                                <input type="checkbox" id="stock-limited">
+                                <label for="stock-limited">Limited Stock</label>
+                            </div>
+                            <div class="filter-option">
+                                <input type="checkbox" id="stock-available-soon">
+                                <label for="stock-available-soon">Available Soon</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Price Range Filter -->
+                    <div class="filter-group">
+                        <h4 class="filter-group-title">Price Range</h4>
+                        <div class="filter-options">
+                            <div class="filter-option">
+                                <input type="checkbox" id="price-under-10000">
+                                <label for="price-under-10000">Under ₹10,000</label>
+                            </div>
+                            <div class="filter-option">
+                                <input type="checkbox" id="price-10000-50000">
+                                <label for="price-10000-50000">₹10,000 - ₹50,000</label>
+                            </div>
+                            <div class="filter-option">
+                                <input type="checkbox" id="price-50000-100000">
+                                <label for="price-50000-100000">₹50,000 - ₹1,00,000</label>
+                            </div>
+                            <div class="filter-option">
+                                <input type="checkbox" id="price-over-100000">
+                                <label for="price-over-100000">Over ₹1,00,000</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Manufacturer Filter -->
+                    <div class="filter-group">
+                        <h4 class="filter-group-title">Manufacturer</h4>
+                        <div class="filter-options">
+                            {% set manufacturers = [] %}
+                            {% for product in products %}
+                            {% if product.manufacturer and product.manufacturer not in manufacturers %}
+                            {% set manufacturers = manufacturers.append(product.manufacturer) %}
+                            {% endif %}
+                            {% endfor %}
+
+                            {% for manufacturer in manufacturers[:5] %}
+                            <div class="filter-option">
+                                <input type="checkbox" id="manufacturer-{{ loop.index }}">
+                                <label for="manufacturer-{{ loop.index }}">{{ manufacturer }}</label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="filter-actions">
+                        <button class="btn btn-primary flex-grow-1" onclick="applyFilters()">
+                            Apply Filters
+                        </button>
+                        <button class="btn btn-secondary" onclick="clearFilters()">
+                            Clear
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="col-md-9">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="product-search"
+                                placeholder="Search within category...">
+                            <button class="btn btn-primary" onclick="searchProducts()">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <select class="form-select" id="sort-options" onchange="sortProducts()"
+                            style="max-width: 200px; display: inline-block;">
+                            <option value="newest">Newest First</option>
+                            <option value="price-low">Price: Low to High</option>
+                            <option value="price-high">Price: High to Low</option>
+                            <option value="name">Name A-Z</option>
+                        </select>
+                    </div>
+                </div>
+
+                {% if products %}
+                <div class="row" id="products-grid">
+                    {% for product in products %}
+                    <div class="col-lg-4 col-md-6 mb-4 product-item" data-name="{{ product.name|lower }}"
+                        data-price="{{ product.price or 0 }}" data-stock="{{ product.stock_status }}"
+                        data-manufacturer="{{ product.manufacturer|lower }}">
+                        <div class="product-card">
+                            {% if product.images and product.images|length > 0 %}
+                            <div class="product-card-image">
+                                <img src="{{ url_for('static', filename='uploads/' + product.images[0]) }}"
+                                    alt="{{ product.name }}">
+                                {% if product.stock_status == 'in_stock' %}
+                                <div class="product-card-badge">In Stock</div>
+                                {% endif %}
+                                <div class="product-card-overlay">
+                                    <a href="{{ url_for('product_detail', product_id=product._id) }}"
+                                        class="btn btn-sm btn-primary">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{{ url_for('enquiry', product_id=product._id) }}"
+                                        class="btn btn-sm btn-accent">
+                                        <i class="fas fa-envelope"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="product-card-image">
+                                <div class="no-image">
+                                    <i class="fas fa-cog"></i>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <div class="product-content">
+                                <h3 class="product-name">{{ product.name }}</h3>
+                                <div class="product-meta">
+                                    <div class="product-partno">
+                                        <i class="fas fa-hashtag"></i>
+                                        <span>{{ product.part_number }}</span>
+                                    </div>
+                                    <div class="product-manufacturer">
+                                        <i class="fas fa-industry"></i>
+                                        <span>{{ product.manufacturer }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="product-specs">
+                                    <p class="spec-text">{{ product.description|truncate(100) }}</p>
+                                </div>
+
+                                <div class="product-footer">
+                                    <div class="product-price">
+                                        {% if product.price and product.price > 0 %}
+                                        <span class="price-label">From</span>
+                                        <span class="price-value">₹{{ "%.2f"|format(product.price) }}</span>
+                                        {% else %}
+                                        <span class="price-value">Contact for Price</span>
+                                        {% endif %}
+                                    </div>
+                                    <a href="{{ url_for('product_detail', product_id=product._id) }}" class="btn-view">
+                                        View Details
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-products">
+                    <div class="empty-icon">
+                        <i class="fas fa-box-open"></i>
+                    </div>
+                    <h3>No Products Found</h3>
+                    <p class="text-muted mb-4">
+                        There are currently no products available in this category.
+                    </p>
+                    <div class="d-flex gap-3 justify-content-center">
+                        <a href="{{ url_for('categories') }}" class="btn btn-primary">
+                            Browse Other Categories
+                        </a>
+                        <a href="{{ url_for('enquiry') }}" class="btn btn-outline">
+                            Request Custom Quote
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Pagination (if needed) -->
+                {% if products|length > 12 %}
+                <div class="pagination-container">
+                    <nav>
+                        <ul class="pagination">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1">Previous</a>
+                            </li>
+                            <li class="page-item active">
+                                <a class="page-link" href="#">1</a>
+                            </li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Related Categories -->
+<section class="bg-soft py-6">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="section-title">Related Categories</h2>
+            <p class="section-subtitle" style="max-width: 700px; margin: 0 auto;">
+                Explore other industrial components you might need
+            </p>
+        </div>
+
+        <div class="row">
+            {% for related_category in categories[:3] %}
+            {% if related_category._id != category._id %}
+            <div class="col-md-4 mb-4">
+                <a href="{{ url_for('category_products', category_id=related_category._id) }}" class="category-card">
+                    <div class="category-icon">
+                        <i class="{{ related_category.icon_class or 'fas fa-cog' }}"></i>
+                    </div>
+                    <h4 class="category-name">{{ related_category.name }}</h4>
+                    <p class="category-description">
+                        {{ related_category.description|truncate(80) or 'Industrial machinery components' }}
+                    </p>
+                    <div class="category-arrow">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </a>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="section-cta py-6">
+    <div class="container">
+        <div class="cta-content text-center">
+            <h2 class="cta-title">Need Bulk Procurement?</h2>
+            <p class="cta-text">
+                For large-scale industrial projects, contact us for volume discounts
+                and customized supply chain solutions.
+            </p>
+            <div class="cta-actions">
+                <a href="{{ url_for('enquiry') }}" class="btn btn-primary btn-lg mr-3">
+                    <i class="fas fa-envelope mr-2"></i>Bulk Enquiry
+                </a>
+                <a href="tel:+912212345678" class="btn btn-outline btn-lg">
+                    <i class="fas fa-phone mr-2"></i>Call Procurement
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Filter functionality
+    function applyFilters() {
+        const searchTerm = document.getElementById('product-search').value.toLowerCase();
+        const sortOption = document.getElementById('sort-options').value;
+        const stockFilters = Array.from(document.querySelectorAll('input[id^="stock-"]:checked'))
+            .map(input => input.id.replace('stock-', ''));
+        const priceFilters = Array.from(document.querySelectorAll('input[id^="price-"]:checked'))
+            .map(input => input.id.replace('price-', ''));
+        const manufacturerFilters = Array.from(document.querySelectorAll('input[id^="manufacturer-"]:checked'))
+            .map(input => {
+                const label = document.querySelector(`label[for="${input.id}"]`);
+                return label ? label.textContent.toLowerCase() : '';
+            });
+
+        const productItems = document.querySelectorAll('.product-item');
+        let visibleCount = 0;
+
+        productItems.forEach(item => {
+            const name = item.dataset.name;
+            const price = parseFloat(item.dataset.price);
+            const stock = item.dataset.stock;
+            const manufacturer = item.dataset.manufacturer;
+
+            let visible = true;
+
+            // Search filter
+            if (searchTerm && !name.includes(searchTerm)) {
+                visible = false;
+            }
+
+            // Stock filter
+            if (stockFilters.length > 0 && !stockFilters.includes(stock)) {
+                visible = false;
+            }
+
+            // Manufacturer filter
+            if (manufacturerFilters.length > 0 && !manufacturerFilters.includes(manufacturer)) {
+                visible = false;
+            }
+
+            // Price filter
+            if (priceFilters.length > 0) {
+                let priceMatch = false;
+                priceFilters.forEach(filter => {
+                    switch (filter) {
+                        case 'under-10000':
+                            if (price < 10000) priceMatch = true;
+                            break;
+                        case '10000-50000':
+                            if (price >= 10000 && price <= 50000) priceMatch = true;
+                            break;
+                        case '50000-100000':
+                            if (price >= 50000 && price <= 100000) priceMatch = true;
+                            break;
+                        case 'over-100000':
+                            if (price > 100000) priceMatch = true;
+                            break;
+                    }
+                });
+                if (!priceMatch) visible = false;
+            }
+
+            if (visible) {
+                item.style.display = 'block';
+                visibleCount++;
+                // Add animation
+                item.style.animation = 'fadeIn 0.5s ease';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+
+        // Update results count
+        document.querySelector('.filter-results').textContent = `${visibleCount} products`;
+
+        // Sort products
+        sortProducts();
+    }
+
+    function clearFilters() {
+        document.querySelectorAll('input[type="checkbox"]').forEach(input => {
+            input.checked = false;
+        });
+        document.getElementById('product-search').value = '';
+        document.getElementById('sort-options').value = 'newest';
+        applyFilters();
+    }
+
+    function searchProducts() {
+        applyFilters();
+    }
+
+    function sortProducts() {
+        const sortOption = document.getElementById('sort-options').value;
+        const container = document.getElementById('products-grid');
+        const items = Array.from(container.querySelectorAll('.product-item:not([style*="display: none"])'));
+
+        items.sort((a, b) => {
+            switch (sortOption) {
+                case 'price-low':
+                    return parseFloat(a.dataset.price) - parseFloat(b.dataset.price);
+                case 'price-high':
+                    return parseFloat(b.dataset.price) - parseFloat(a.dataset.price);
+                case 'name':
+                    return a.dataset.name.localeCompare(b.dataset.name);
+                default: // newest
+                    return 0; // In real app, you would sort by date
+            }
+        });
+
+        // Reorder items
+        items.forEach(item => container.appendChild(item));
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function () {
+        applyFilters();
+    });
+</script>
+
+<style>
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+{% endblock %}

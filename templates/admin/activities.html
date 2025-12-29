@@ -1,0 +1,161 @@
+<!-- templates/admin/activities.html -->
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Activity Log | Mumbai-Tech Admin{% endblock %}
+
+{% block page_title %}Activity Log{% endblock %}
+
+{% block content %}
+<div class="admin-content">
+    <div class="admin-card">
+        <div class="card-header">
+            <h2>Activity Log</h2>
+            <div class="header-actions">
+                <span class="text-muted">Showing last 100 activities</span>
+            </div>
+        </div>
+
+        <div class="card-body">
+            {% if activities %}
+            <div class="timeline">
+                {% for activity in activities %}
+                <div class="timeline-item">
+                    <div class="timeline-icon">
+                        {% if 'login' in activity.action %}
+                        <i class="fas fa-sign-in-alt text-success"></i>
+                        {% elif 'logout' in activity.action %}
+                        <i class="fas fa-sign-out-alt text-warning"></i>
+                        {% elif 'add' in activity.action %}
+                        <i class="fas fa-plus-circle text-primary"></i>
+                        {% elif 'edit' in activity.action %}
+                        <i class="fas fa-edit text-info"></i>
+                        {% elif 'delete' in activity.action %}
+                        <i class="fas fa-trash text-danger"></i>
+                        {% else %}
+                        <i class="fas fa-info-circle"></i>
+                        {% endif %}
+                    </div>
+
+                    <div class="timeline-content">
+                        <div class="timeline-header">
+                            <h5 class="mb-1">{{ activity.details }}</h5>
+                            <span class="timeline-time">
+                                {{ activity.timestamp.strftime('%d %b %Y, %I:%M %p') }}
+                            </span>
+                        </div>
+
+                        <div class="timeline-body">
+                            <div class="activity-meta">
+                                <span class="badge badge-light">
+                                    <i class="fas fa-user mr-1"></i>{{ activity.user_name }}
+                                </span>
+                                <span class="badge badge-light">
+                                    <i class="fas fa-globe mr-1"></i>{{ activity.ip_address }}
+                                </span>
+                                <span class="badge badge-light">
+                                    <i class="fas fa-tag mr-1"></i>{{ activity.action|title }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state text-center py-5">
+                <i class="fas fa-history fa-4x mb-4 text-muted"></i>
+                <h4>No activities recorded</h4>
+                <p class="text-muted">Activity log will appear here as actions are performed</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .timeline {
+        position: relative;
+        padding-left: 30px;
+    }
+
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 15px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: var(--border-soft);
+    }
+
+    .timeline-item {
+        position: relative;
+        margin-bottom: 2rem;
+    }
+
+    .timeline-icon {
+        position: absolute;
+        left: -30px;
+        top: 0;
+        width: 30px;
+        height: 30px;
+        background: var(--bg-card);
+        border: 2px solid var(--border-soft);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .timeline-content {
+        background: var(--bg-card);
+        border: 1px solid var(--border-soft);
+        border-radius: var(--radius-md);
+        padding: 1.5rem;
+        margin-left: 1rem;
+    }
+
+    .timeline-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 0.5rem;
+    }
+
+    .timeline-header h5 {
+        margin: 0;
+        font-size: 1rem;
+        color: var(--text-main);
+    }
+
+    .timeline-time {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        white-space: nowrap;
+        margin-left: 1rem;
+    }
+
+    .timeline-body {
+        margin-top: 0.75rem;
+    }
+
+    .activity-meta {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .activity-meta .badge {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+    }
+
+    .empty-state {
+        padding: 3rem 1rem;
+    }
+
+    .empty-state i {
+        color: var(--border-medium);
+    }
+</style>
+{% endblock %}

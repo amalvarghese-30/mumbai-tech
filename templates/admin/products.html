@@ -1,0 +1,269 @@
+<!-- templates/admin/products.html -->
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Manage Products | Mumbai-Tech Admin{% endblock %}
+
+{% block page_title %}Products Management{% endblock %}
+
+{% block content %}
+<div class="admin-content">
+    <!-- Filters and Search -->
+    <div class="admin-card mb-4">
+        <div class="card-body">
+            <form method="GET" action="{{ url_for('admin_products') }}" class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label">Search</label>
+                    <input type="text" name="search" class="form-control" placeholder="Product name, part number..."
+                        value="{{ request.args.get('search', '') }}">
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Category</label>
+                    <select name="category" class="form-select">
+                        <option value="">All Categories</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat._id }}" {{ 'selected' if selected_category==cat._id|string }}>
+                            {{ cat.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Stock Status</label>
+                    <select name="stock_status" class="form-select">
+                        <option value="">All Status</option>
+                        <option value="in_stock" {{ 'selected' if selected_stock=='in_stock' }}>
+                            In Stock
+                        </option>
+                        <option value="limited" {{ 'selected' if selected_stock=='limited' }}>
+                            Limited Stock
+                        </option>
+                        <option value="out_of_stock" {{ 'selected' if selected_stock=='out_of_stock' }}>
+                            Out of Stock
+                        </option>
+                        <option value="available_soon" {{ 'selected' if selected_stock=='available_soon' }}>
+                            Available Soon
+                        </option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-filter mr-2"></i>Filter
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Products Table -->
+    <div class="admin-card">
+        <div class="card-header">
+            <h2>Products ({{ products|length }})</h2>
+            <div class="header-actions">
+                <a href="{{ url_for('add_product') }}" class="btn btn-primary">
+                    <i class="fas fa-plus mr-2"></i>Add Product
+                </a>
+                <a href="{{ url_for('admin_products') }}" class="btn btn-secondary">
+                    <i class="fas fa-sync-alt mr-2"></i>Refresh
+                </a>
+            </div>
+        </div>
+
+        <div class="card-body">
+            {% if products %}
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Product Name</th>
+                            <th>Part No.</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th>Featured</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in products %}
+                        <tr>
+                            <td>
+                                {% if product.images and product.images|length > 0 %}
+                                <div class="product-thumb">
+                                    <img src="{{ url_for('static', filename='uploads/' + product.images[0]) }}"
+                                        alt="{{ product.name }}"
+                                        style="width: 50px; height: 50px; object-fit: cover; border-radius: var(--radius-sm);">
+                                </div>
+                                {% else %}
+                                <div class="product-thumb-placeholder">
+                                    <i class="fas fa-cog" style="color: var(--border-medium);"></i>
+                                </div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <strong>{{ product.name }}</strong>
+                                <br>
+                                <small class="text-muted">{{ product.manufacturer }}</small>
+                            </td>
+                            <td>
+                                <code>{{ product.part_number }}</code>
+                            </td>
+                            <td>
+                                {% if category_dict[product.category_id] %}
+                                <span class="badge badge-light">
+                                    {{ category_dict[product.category_id] }}
+                                </span>
+                                {% else %}
+                                <span class="text-muted">Unknown</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if product.price and product.price > 0 %}
+                                <strong>₹{{ "%.2f"|format(product.price) }}</strong>
+                                {% else %}
+                                <span class="text-muted">Contact</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if product.stock_status == 'in_stock' %}
+                                <span class="badge badge-stock">In Stock</span>
+                                {% elif product.stock_status == 'limited' %}
+                                <span class="badge badge-warning">Limited</span>
+                                {% elif product.stock_status == 'out_of_stock' %}
+                                <span class="badge badge-error">Out of Stock</span>
+                                {% elif product.stock_status == 'available_soon' %}
+                                <span class="badge badge-info">Soon</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if product.is_featured == 'yes' %}
+                                <i class="fas fa-star text-warning"></i>
+                                {% else %}
+                                <i class="far fa-star text-muted"></i>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {{ product.created_at.strftime('%Y-%m-%d') }}
+                            </td>
+                            <td class="table-actions">
+                                <a href="{{ url_for('product_detail', product_id=product._id) }}" target="_blank"
+                                    class="btn btn-sm btn-view" title="View">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ url_for('edit_product', product_id=product._id) }}"
+                                    class="btn btn-sm btn-edit" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{{ url_for('delete_product', product_id=product._id) }}"
+                                    class="btn btn-sm btn-danger" title="Delete"
+                                    onclick="return confirm('Are you sure you want to delete this product?')">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            {% if total_pages > 1 %}
+            <nav class="pagination-container mt-4">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item {{ 'disabled' if current_page == 1 }}">
+                        <a class="page-link"
+                            href="{{ url_for('admin_products', page=current_page-1, search=search, category=selected_category, stock_status=selected_stock) }}">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </li>
+
+                    {% for page_num in range(1, total_pages + 1) %}
+                    <li class="page-item {{ 'active' if page_num == current_page }}">
+                        <a class="page-link"
+                            href="{{ url_for('admin_products', page=page_num, search=search, category=selected_category, stock_status=selected_stock) }}">
+                            {{ page_num }}
+                        </a>
+                    </li>
+                    {% endfor %}
+
+                    <li class="page-item {{ 'disabled' if current_page == total_pages }}">
+                        <a class="page-link"
+                            href="{{ url_for('admin_products', page=current_page+1, search=search, category=selected_category, stock_status=selected_stock) }}">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            {% endif %}
+
+            {% else %}
+            <div class="empty-state text-center py-5">
+                <i class="fas fa-boxes fa-4x mb-4 text-muted"></i>
+                <h4>No products found</h4>
+                <p class="text-muted">
+                    {% if request.args.get('search') or request.args.get('category') or request.args.get('stock_status')
+                    %}
+                    Try adjusting your filters or search terms
+                    {% else %}
+                    Add your first product to get started
+                    {% endif %}
+                </p>
+                <a href="{{ url_for('add_product') }}" class="btn btn-primary mt-2">
+                    <i class="fas fa-plus mr-2"></i>Add Product
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .product-thumb {
+        width: 50px;
+        height: 50px;
+        border-radius: var(--radius-sm);
+        overflow: hidden;
+        border: 1px solid var(--border-soft);
+    }
+
+    .product-thumb-placeholder {
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--bg-input);
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border-soft);
+    }
+
+    .pagination-container .page-item.active .page-link {
+        background-color: var(--accent-primary);
+        border-color: var(--accent-primary);
+        color: var(--text-inverse);
+    }
+
+    .pagination-container .page-link {
+        color: var(--accent-primary);
+        border: 1px solid var(--border-soft);
+        margin: 0 2px;
+    }
+
+    .pagination-container .page-link:hover {
+        background-color: var(--accent-muted);
+        border-color: var(--accent-primary);
+    }
+
+    .empty-state {
+        padding: 3rem 1rem;
+    }
+
+    .empty-state i {
+        color: var(--border-medium);
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,724 @@
+<!-- templates/public/search_results.html -->
+{% extends "base.html" %}
+
+{% block title %}Search Results | Mumbai-Tech Industrial Parts{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-search {
+        background: linear-gradient(rgba(14, 14, 14, 0.9), rgba(14, 14, 14, 0.95));
+        padding: 5rem 0 3rem;
+        text-align: center;
+    }
+
+    .hero-search h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .search-query {
+        color: var(--accent-primary);
+        font-style: italic;
+    }
+
+    .hero-search .subtitle {
+        font-size: 1.125rem;
+        color: var(--text-secondary);
+        max-width: 600px;
+        margin: 0 auto 2rem;
+        line-height: 1.6;
+    }
+
+    .search-section {
+        padding: 3rem 0;
+    }
+
+    .search-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .search-box-large {
+        margin-bottom: 3rem;
+    }
+
+    .search-form-large {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .search-input-large {
+        flex: 1;
+        padding: 1rem 1.5rem;
+        background: var(--bg-input);
+        border: 1px solid var(--border-soft);
+        border-radius: var(--radius-lg);
+        color: var(--text-main);
+        font-size: 1.125rem;
+    }
+
+    .search-input-large:focus {
+        outline: none;
+        border-color: var(--accent-primary);
+        box-shadow: 0 0 0 3px var(--accent-muted);
+    }
+
+    .search-btn-large {
+        padding: 0 2.5rem;
+        background: var(--accent-primary);
+        color: var(--text-inverse);
+        border: none;
+        border-radius: var(--radius-lg);
+        font-size: 1.125rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .search-btn-large:hover {
+        background: var(--accent-hover);
+        transform: translateY(-2px);
+    }
+
+    .search-results-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--border-soft);
+    }
+
+    .results-count {
+        font-size: 1.125rem;
+        color: var(--text-secondary);
+    }
+
+    .results-count strong {
+        color: var(--accent-primary);
+    }
+
+    .search-filters {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .filter-select {
+        padding: 0.5rem 2rem 0.5rem 1rem;
+        background: var(--bg-input);
+        border: 1px solid var(--border-soft);
+        border-radius: var(--radius-md);
+        color: var(--text-main);
+        font-size: 0.9375rem;
+        cursor: pointer;
+    }
+
+    .search-results-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .no-results {
+        text-align: center;
+        padding: 4rem 2rem;
+        grid-column: 1 / -1;
+    }
+
+    .no-results-icon {
+        font-size: 4rem;
+        color: var(--border-medium);
+        margin-bottom: 1.5rem;
+    }
+
+    .search-suggestions {
+        margin-top: 2rem;
+        padding: 2rem;
+        background: var(--bg-card);
+        border: 1px solid var(--border-soft);
+        border-radius: var(--radius-lg);
+    }
+
+    .suggestions-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        color: var(--text-main);
+    }
+
+    .suggestions-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .suggestion-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1rem;
+        background: var(--bg-input);
+        border-radius: var(--radius-md);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .suggestion-item:hover {
+        background: var(--accent-muted);
+        transform: translateX(5px);
+    }
+
+    .suggestion-icon {
+        color: var(--accent-primary);
+        font-size: 1.25rem;
+        margin-top: 0.25rem;
+        flex-shrink: 0;
+    }
+
+    .suggestion-content h4 {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+        color: var(--text-main);
+    }
+
+    .suggestion-content p {
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+        margin: 0;
+        line-height: 1.4;
+    }
+
+    .related-searches {
+        margin-top: 3rem;
+    }
+
+    .related-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        color: var(--text-main);
+    }
+
+    .related-tags {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .related-tag {
+        padding: 0.5rem 1rem;
+        background: var(--bg-input);
+        border: 1px solid var(--border-soft);
+        border-radius: var(--radius-md);
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .related-tag:hover {
+        background: var(--accent-muted);
+        border-color: var(--accent-primary);
+        color: var(--accent-primary);
+    }
+
+    .search-tips {
+        margin-top: 3rem;
+        padding: 2rem;
+        background: var(--bg-card);
+        border: 1px solid var(--border-soft);
+        border-radius: var(--radius-lg);
+    }
+
+    .tips-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        color: var(--text-main);
+    }
+
+    .tips-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .tips-list li {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        color: var(--text-secondary);
+    }
+
+    .tips-list li i {
+        color: var(--accent-primary);
+        margin-top: 0.25rem;
+        flex-shrink: 0;
+    }
+
+    .search-help {
+        text-align: center;
+        margin-top: 3rem;
+        padding-top: 3rem;
+        border-top: 1px solid var(--border-soft);
+    }
+
+    @media (max-width: 768px) {
+        .hero-search h1 {
+            font-size: 2rem;
+        }
+
+        .search-form-large {
+            flex-direction: column;
+        }
+
+        .search-btn-large {
+            padding: 1rem;
+        }
+
+        .search-results-header {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 1rem;
+        }
+
+        .search-filters {
+            justify-content: space-between;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-search">
+    <div class="container">
+        <h1>Search Results</h1>
+        <p class="subtitle">
+            {% if query %}
+            Showing results for "<span class="search-query">{{ query }}</span>"
+            {% else %}
+            Search our industrial parts catalog
+            {% endif %}
+        </p>
+
+        <div class="search-box-large">
+            <form method="GET" action="{{ url_for('search') }}" class="search-form-large">
+                <input type="text" name="q" class="search-input-large"
+                    placeholder="Search for industrial parts, manufacturers, or specifications..." value="{{ query }}"
+                    autofocus>
+                <button type="submit" class="search-btn-large">
+                    <i class="fas fa-search mr-2"></i>Search
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- Search Results -->
+<section class="search-section">
+    <div class="container">
+        <div class="search-results-header">
+            <div class="results-count">
+                Found <strong>{{ products|length }}</strong>
+                result{{ 's' if products|length != 1 else '' }}
+                {% if query %}for "<strong>{{ query }}</strong>"{% endif %}
+            </div>
+
+            <div class="search-filters">
+                <span class="sort-label">Sort by:</span>
+                <select class="filter-select" id="sort-results">
+                    <option value="relevance">Relevance</option>
+                    <option value="newest">Newest</option>
+                    <option value="price-low">Price: Low to High</option>
+                    <option value="price-high">Price: High to Low</option>
+                </select>
+            </div>
+        </div>
+
+        {% if products %}
+        <div class="search-results-grid" id="search-results">
+            {% for product in products %}
+            <div class="product-card search-result-item" data-name="{{ product.name|lower }}"
+                data-price="{{ product.price or 0 }}"
+                data-created="{{ product.created_at.timestamp() if product.created_at else 0 }}">
+                {% if product.images and product.images|length > 0 %}
+                <div class="product-card-image">
+                    <img src="{{ url_for('static', filename='uploads/' + product.images[0]) }}"
+                        alt="{{ product.name }}">
+                    {% if product.stock_status == 'in_stock' %}
+                    <div class="product-card-badge">In Stock</div>
+                    {% endif %}
+                    <div class="product-card-overlay">
+                        <a href="{{ url_for('product_detail', product_id=product._id) }}"
+                            class="btn btn-sm btn-primary">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                        <a href="{{ url_for('enquiry', product_id=product._id) }}" class="btn btn-sm btn-accent">
+                            <i class="fas fa-envelope"></i>
+                        </a>
+                    </div>
+                </div>
+                {% else %}
+                <div class="product-card-image">
+                    <div class="no-image">
+                        <i class="fas fa-cog"></i>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="product-content">
+                    <h3 class="product-name">{{ product.name }}</h3>
+                    <div class="product-category">
+                        {% if category_dict.get(product.category_id) %}
+                        {{ category_dict[product.category_id] }}
+                        {% else %}
+                        Uncategorized
+                        {% endif %}
+                    </div>
+
+                    <div class="product-meta">
+                        <div class="product-partno">
+                            <i class="fas fa-hashtag"></i>
+                            <span>{{ product.part_number }}</span>
+                        </div>
+                        <div class="product-manufacturer">
+                            <i class="fas fa-industry"></i>
+                            <span>{{ product.manufacturer }}</span>
+                        </div>
+                    </div>
+
+                    <div class="product-specs">
+                        <p class="spec-text">{{ product.description|truncate(100) }}</p>
+                    </div>
+
+                    <div class="product-footer">
+                        <div class="product-price">
+                            {% if product.price and product.price > 0 %}
+                            <span class="price-label">From</span>
+                            <span class="price-value">₹{{ "%.2f"|format(product.price) }}</span>
+                            {% else %}
+                            <span class="price-value">Contact for Price</span>
+                            {% endif %}
+                        </div>
+                        <a href="{{ url_for('product_detail', product_id=product._id) }}" class="btn-view">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="no-results">
+            <div class="no-results-icon">
+                <i class="fas fa-search"></i>
+            </div>
+            <h3>No Results Found</h3>
+            <p class="text-muted mb-4">
+                We couldn't find any products matching "{{ query }}".
+            </p>
+
+            <!-- Search Suggestions -->
+            <div class="search-suggestions">
+                <h4 class="suggestions-title">Search Suggestions</h4>
+                <div class="suggestions-list">
+                    <a href="{{ url_for('search') }}?q=bearing" class="suggestion-item">
+                        <div class="suggestion-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <div class="suggestion-content">
+                            <h4>Search for "Bearing"</h4>
+                            <p>Ball bearings, roller bearings, and bearing assemblies</p>
+                        </div>
+                    </a>
+
+                    <a href="{{ url_for('search') }}?q=gear" class="suggestion-item">
+                        <div class="suggestion-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <div class="suggestion-content">
+                            <h4>Search for "Gear"</h4>
+                            <p>Spur gears, helical gears, and gear components</p>
+                        </div>
+                    </a>
+
+                    <a href="{{ url_for('search') }}?q=hydraulic" class="suggestion-item">
+                        <div class="suggestion-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <div class="suggestion-content">
+                            <h4>Search for "Hydraulic"</h4>
+                            <p>Hydraulic cylinders, pumps, and valves</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Related Searches -->
+            <div class="related-searches">
+                <h4 class="related-title">Related Searches</h4>
+                <div class="related-tags">
+                    <a href="{{ url_for('search') }}?q=motor" class="related-tag">Motor</a>
+                    <a href="{{ url_for('search') }}?q=pump" class="related-tag">Pump</a>
+                    <a href="{{ url_for('search') }}?q=valve" class="related-tag">Valve</a>
+                    <a href="{{ url_for('search') }}?q=seal" class="related-tag">Seal</a>
+                    <a href="{{ url_for('search') }}?q=coupling" class="related-tag">Coupling</a>
+                    <a href="{{ url_for('search') }}?q=bushing" class="related-tag">Bushing</a>
+                    <a href="{{ url_for('search') }}?q=shaft" class="related-tag">Shaft</a>
+                    <a href="{{ url_for('search') }}?q=chain" class="related-tag">Chain</a>
+                </div>
+            </div>
+
+            <!-- Search Tips -->
+            <div class="search-tips">
+                <h4 class="tips-title">Search Tips</h4>
+                <ul class="tips-list">
+                    <li>
+                        <i class="fas fa-check-circle"></i>
+                        <div>
+                            <strong>Check your spelling</strong> - Try using fewer or different keywords
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fas fa-check-circle"></i>
+                        <div>
+                            <strong>Use specific terms</strong> - Instead of "machine part", try "hydraulic cylinder"
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fas fa-check-circle"></i>
+                        <div>
+                            <strong>Try part numbers</strong> - Search using manufacturer part numbers if available
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fas fa-check-circle"></i>
+                        <div>
+                            <strong>Browse categories</strong> - Navigate through our product categories
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Help Section -->
+            <div class="search-help">
+                <p class="text-muted mb-3">
+                    Still can't find what you're looking for?
+                </p>
+                <div class="d-flex gap-3 justify-content-center">
+                    <a href="{{ url_for('categories') }}" class="btn btn-primary">
+                        <i class="fas fa-tags mr-2"></i>Browse Categories
+                    </a>
+                    <a href="{{ url_for('enquiry') }}" class="btn btn-outline">
+                        <i class="fas fa-headset mr-2"></i>Contact Support
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if products and products|length >= 20 %}
+        <!-- Load More Button -->
+        <div class="text-center mt-5">
+            <button class="btn btn-primary btn-lg" onclick="loadMoreResults()">
+                <i class="fas fa-spinner mr-2"></i>Load More Results
+            </button>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="section-cta py-6">
+    <div class="container">
+        <div class="cta-content text-center">
+            <h2 class="cta-title">Need Help Finding the Right Part?</h2>
+            <p class="cta-text">
+                Our technical experts can help you identify and source the exact components you need.
+            </p>
+            <div class="cta-actions">
+                <a href="{{ url_for('enquiry') }}" class="btn btn-primary btn-lg mr-3">
+                    <i class="fas fa-envelope mr-2"></i>Technical Consultation
+                </a>
+                <a href="tel:+912212345678" class="btn btn-outline btn-lg">
+                    <i class="fas fa-phone mr-2"></i>Call an Expert
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Sort functionality
+    document.getElementById('sort-results').addEventListener('change', function () {
+        sortSearchResults(this.value);
+    });
+
+    function sortSearchResults(sortBy) {
+        const container = document.getElementById('search-results');
+        const items = Array.from(container.querySelectorAll('.search-result-item'));
+
+        items.sort((a, b) => {
+            const aName = a.dataset.name;
+            const bName = b.dataset.name;
+            const aPrice = parseFloat(a.dataset.price) || 0;
+            const bPrice = parseFloat(b.dataset.price) || 0;
+            const aCreated = parseFloat(a.dataset.created) || 0;
+            const bCreated = parseFloat(b.dataset.created) || 0;
+
+            switch (sortBy) {
+                case 'price-low':
+                    return aPrice - bPrice;
+                case 'price-high':
+                    return bPrice - aPrice;
+                case 'newest':
+                    return bCreated - aCreated;
+                case 'relevance':
+                default:
+                    // For relevance, items are already sorted by MongoDB text score
+                    return 0;
+            }
+        });
+
+        // Reorder items with animation
+        items.forEach((item, index) => {
+            container.appendChild(item);
+            item.style.animationDelay = `${index * 0.05}s`;
+            item.style.animation = 'fadeIn 0.3s ease';
+        });
+    }
+
+    // Load more functionality (simulated)
+    function loadMoreResults() {
+        const button = event.target;
+        const originalText = button.innerHTML;
+
+        // Show loading state
+        button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Loading...';
+        button.disabled = true;
+
+        // Simulate API call
+        setTimeout(() => {
+            // In a real app, this would fetch more results from the server
+            // For now, we'll just show a message
+            button.innerHTML = originalText;
+            button.disabled = false;
+            button.textContent = 'No More Results';
+            button.classList.remove('btn-primary');
+            button.classList.add('btn-secondary');
+            button.disabled = true;
+        }, 1500);
+    }
+
+    // Highlight search terms in results
+    function highlightSearchTerms() {
+        const query = "{{ query|lower }}";
+        if (!query) return;
+
+        const searchTerms = query.split(' ').filter(term => term.length > 2);
+        if (searchTerms.length === 0) return;
+
+        const items = document.querySelectorAll('.search-result-item');
+        items.forEach(item => {
+            // Highlight in product name
+            const nameElement = item.querySelector('.product-name');
+            if (nameElement) {
+                let nameText = nameElement.textContent;
+                searchTerms.forEach(term => {
+                    const regex = new RegExp(`(${term})`, 'gi');
+                    nameText = nameText.replace(regex, '<mark class="search-highlight">$1</mark>');
+                });
+                nameElement.innerHTML = nameText;
+            }
+
+            // Highlight in description
+            const descElement = item.querySelector('.spec-text');
+            if (descElement) {
+                let descText = descElement.textContent;
+                searchTerms.forEach(term => {
+                    const regex = new RegExp(`(${term})`, 'gi');
+                    descText = descText.replace(regex, '<mark class="search-highlight">$1</mark>');
+                });
+                descElement.innerHTML = descText;
+            }
+        });
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function () {
+        // Set focus on search input
+        const searchInput = document.querySelector('.search-input-large');
+        if (searchInput) {
+            searchInput.focus();
+            searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length);
+        }
+
+        // Highlight search terms
+        highlightSearchTerms();
+
+        // Add animation to search results
+        const results = document.querySelectorAll('.search-result-item');
+        results.forEach((result, index) => {
+            result.style.animationDelay = `${index * 0.05}s`;
+            result.style.animation = 'fadeIn 0.3s ease';
+        });
+
+        // Setup search form submission
+        const searchForm = document.querySelector('.search-form-large');
+        if (searchForm) {
+            searchForm.addEventListener('submit', function (e) {
+                const searchValue = this.querySelector('input').value.trim();
+                if (!searchValue) {
+                    e.preventDefault();
+                    this.querySelector('input').focus();
+                }
+            });
+        }
+    });
+</script>
+
+<style>
+    .search-highlight {
+        background-color: rgba(245, 179, 1, 0.3);
+        padding: 0.125rem 0.25rem;
+        border-radius: 2px;
+        font-weight: 600;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .fa-spinner {
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        from {
+            transform: rotate(0deg);
+        }
+
+        to {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+{% endblock %}

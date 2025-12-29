@@ -1,0 +1,1209 @@
+<!-- templates/public/products.html -->
+{% extends "base.html" %}
+
+{% block title %}Industrial Machinery Parts | Mumbai-Tech{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-products {
+        background: linear-gradient(rgba(14, 14, 14, 0.9), rgba(14, 14, 14, 0.95)),
+        url("{{ url_for('static', filename='images/products-hero.jpg') }}");
+        background-size: cover;
+        background-position: center;
+        padding: 6rem 0 4rem;
+        text-align: center;
+    }
+
+    .hero-products h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .hero-products .subtitle {
+        font-size: 1.25rem;
+        color: var(--text-secondary);
+        max-width: 700px;
+        margin: 0 auto 2rem;
+        line-height: 1.6;
+    }
+
+    .products-section {
+        padding: 4rem 0;
+    }
+
+    .filter-sidebar {
+        background: var(--bg-card);
+        border: 1px solid var(--border-soft);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        position: sticky;
+        top: 2rem;
+    }
+
+    .filter-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--border-soft);
+    }
+
+    .filter-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin: 0;
+        color: var(--text-main);
+    }
+
+    .clear-filters {
+        font-size: 0.875rem;
+        color: var(--accent-primary);
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+    }
+
+    .filter-group {
+        margin-bottom: 2rem;
+    }
+
+    .filter-group-title {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: var(--text-main);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .filter-options {
+        max-height: 200px;
+        overflow-y: auto;
+        padding-right: 0.5rem;
+    }
+
+    .filter-options::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .filter-options::-webkit-scrollbar-track {
+        background: var(--bg-input);
+        border-radius: 3px;
+    }
+
+    .filter-options::-webkit-scrollbar-thumb {
+        background: var(--border-medium);
+        border-radius: 3px;
+    }
+
+    .filter-option {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+        cursor: pointer;
+    }
+
+    .filter-option input {
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+        accent-color: var(--accent-primary);
+    }
+
+    .filter-option label {
+        cursor: pointer;
+        font-size: 0.9375rem;
+        color: var(--text-secondary);
+        flex: 1;
+    }
+
+    .filter-count {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        background: var(--bg-input);
+        padding: 0.125rem 0.5rem;
+        border-radius: 10px;
+    }
+
+    .price-range {
+        margin-top: 1rem;
+    }
+
+    .price-inputs {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .price-input {
+        flex: 1;
+    }
+
+    .price-input input {
+        width: 100%;
+        padding: 0.5rem;
+        background: var(--bg-input);
+        border: 1px solid var(--border-soft);
+        border-radius: var(--radius-sm);
+        color: var(--text-main);
+        text-align: center;
+    }
+
+    .price-slider {
+        width: 100%;
+        height: 4px;
+        background: var(--border-soft);
+        border-radius: 2px;
+        outline: none;
+        -webkit-appearance: none;
+    }
+
+    .price-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        background: var(--accent-primary);
+        border-radius: 50%;
+        cursor: pointer;
+        border: 2px solid var(--bg-card);
+    }
+
+    .products-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .search-sort-container {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .products-search {
+        position: relative;
+        width: 300px;
+    }
+
+    .products-search input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        padding-right: 3rem;
+        background: var(--bg-input);
+        border: 1px solid var(--border-soft);
+        border-radius: var(--radius-md);
+        color: var(--text-main);
+        font-size: 0.9375rem;
+    }
+
+    .products-search button {
+        position: absolute;
+        right: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        cursor: pointer;
+    }
+
+    .sort-options {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .sort-label {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+    }
+
+    .sort-select {
+        padding: 0.5rem 2rem 0.5rem 1rem;
+        background: var(--bg-input);
+        border: 1px solid var(--border-soft);
+        border-radius: var(--radius-md);
+        color: var(--text-main);
+        font-size: 0.9375rem;
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23f5b301' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 12px;
+    }
+
+    .view-options {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .view-btn {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--bg-input);
+        border: 1px solid var(--border-soft);
+        border-radius: var(--radius-md);
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .view-btn.active {
+        background: var(--accent-muted);
+        border-color: var(--accent-primary);
+        color: var(--accent-primary);
+    }
+
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+    }
+
+    .products-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .product-card-list {
+        display: flex;
+        background: var(--bg-card);
+        border: 1px solid var(--border-soft);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .product-card-list:hover {
+        transform: translateY(-2px);
+        border-color: var(--accent-primary);
+        box-shadow: var(--shadow-md);
+    }
+
+    .product-image-list {
+        width: 200px;
+        height: 200px;
+        flex-shrink: 0;
+        background: var(--bg-input);
+    }
+
+    .product-image-list img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .product-content-list {
+        flex: 1;
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .product-header-list {
+        margin-bottom: 1rem;
+    }
+
+    .product-name-list {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--text-main);
+    }
+
+    .product-meta-list {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-bottom: 0.5rem;
+    }
+
+    .product-specs-list {
+        flex: 1;
+        color: var(--text-secondary);
+        font-size: 0.9375rem;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+    }
+
+    .product-footer-list {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: auto;
+    }
+
+    .pagination-container {
+        margin-top: 3rem;
+        display: flex;
+        justify-content: center;
+    }
+
+    .pagination {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .page-link {
+        padding: 0.5rem 1rem;
+        background: var(--bg-input);
+        border: 1px solid var(--border-soft);
+        border-radius: var(--radius-md);
+        color: var(--text-secondary);
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .page-link:hover {
+        background: var(--accent-muted);
+        border-color: var(--accent-primary);
+        color: var(--accent-primary);
+    }
+
+    .page-link.active {
+        background: var(--accent-primary);
+        border-color: var(--accent-primary);
+        color: var(--text-inverse);
+    }
+
+    .empty-products {
+        text-align: center;
+        padding: 4rem 2rem;
+        grid-column: 1 / -1;
+    }
+
+    .empty-icon {
+        font-size: 4rem;
+        color: var(--border-medium);
+        margin-bottom: 1.5rem;
+    }
+
+    @media (max-width: 992px) {
+        .filter-sidebar {
+            position: static;
+            margin-bottom: 2rem;
+        }
+
+        .products-search {
+            width: 100%;
+        }
+
+        .product-card-list {
+            flex-direction: column;
+        }
+
+        .product-image-list {
+            width: 100%;
+            height: 200px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .hero-products h1 {
+            font-size: 2.25rem;
+        }
+
+        .hero-products .subtitle {
+            font-size: 1.125rem;
+        }
+
+        .products-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .search-sort-container {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .sort-options {
+            justify-content: space-between;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-products">
+    <div class="container">
+        <h1>Industrial Machinery Parts Catalog</h1>
+        <p class="subtitle">
+            Browse our extensive collection of precision-engineered components for construction,
+            manufacturing, mining, and heavy machinery applications.
+        </p>
+        <div class="search-box">
+            <form method="GET" action="{{ url_for('all_products') }}" class="search-form">
+                <input type="text" name="search" class="search-input"
+                    placeholder="Search products by name, part number, or specification..." value="{{ search_query }}">
+                <button type="submit" class="search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- Products Section -->
+<section class="products-section">
+    <div class="container">
+        <div class="row">
+            <!-- Filters Sidebar -->
+            <div class="col-lg-3">
+                <div class="filter-sidebar">
+                    <div class="filter-header">
+                        <h3 class="filter-title">Filters</h3>
+                        <button class="clear-filters" onclick="clearAllFilters()">
+                            Clear All
+                        </button>
+                    </div>
+
+                    <!-- Search Filter -->
+                    <div class="filter-group">
+                        <div class="filter-group-title">
+                            <span>Search</span>
+                        </div>
+                        <div class="products-search">
+                            <input type="text" id="live-search" placeholder="Search products..."
+                                value="{{ search_query }}">
+                            <button type="button" onclick="performSearch()">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Category Filter -->
+                    <div class="filter-group">
+                        <div class="filter-group-title">
+                            <span>Categories</span>
+                        </div>
+                        <div class="filter-options" id="category-filters">
+                            {% for cat_id, cat_name in categories %}
+                            <div class="filter-option">
+                                <input type="checkbox" id="cat-{{ cat_id }}" data-category="{{ cat_id }}" {{ 'checked'
+                                    if selected_category==cat_id }}>
+                                <label for="cat-{{ cat_id }}">{{ cat_name }}</label>
+                                <span class="filter-count">0</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Price Filter -->
+                    <div class="filter-group">
+                        <div class="filter-group-title">
+                            <span>Price Range</span>
+                            <span id="price-range-display">₹0 - ₹10,00,000</span>
+                        </div>
+                        <div class="price-range">
+                            <input type="range" class="price-slider" id="price-slider" min="0" max="1000000" step="1000"
+                                value="1000000">
+                            <div class="price-inputs">
+                                <div class="price-input">
+                                    <label style="font-size: 0.75rem; color: var(--text-muted);">Min</label>
+                                    <input type="number" id="min-price" value="0" min="0" max="1000000" step="1000">
+                                </div>
+                                <div class="price-input">
+                                    <label style="font-size: 0.75rem; color: var(--text-muted);">Max</label>
+                                    <input type="number" id="max-price" value="1000000" min="0" max="1000000"
+                                        step="1000">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stock Filter -->
+                    <div class="filter-group">
+                        <div class="filter-group-title">
+                            <span>Stock Status</span>
+                        </div>
+                        <div class="filter-options">
+                            <div class="filter-option">
+                                <input type="checkbox" id="stock-in-stock" data-stock="in_stock" checked>
+                                <label for="stock-in-stock">In Stock</label>
+                            </div>
+                            <div class="filter-option">
+                                <input type="checkbox" id="stock-limited" data-stock="limited" checked>
+                                <label for="stock-limited">Limited Stock</label>
+                            </div>
+                            <div class="filter-option">
+                                <input type="checkbox" id="stock-available-soon" data-stock="available_soon" checked>
+                                <label for="stock-available-soon">Available Soon</label>
+                            </div>
+                            <div class="filter-option">
+                                <input type="checkbox" id="stock-out-of-stock" data-stock="out_of_stock">
+                                <label for="stock-out-of-stock">Out of Stock</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Manufacturer Filter -->
+                    <div class="filter-group">
+                        <div class="filter-group-title">
+                            <span>Manufacturer</span>
+                        </div>
+                        <div class="filter-options" id="manufacturer-filters">
+                            <!-- Will be populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Featured Filter -->
+                    <div class="filter-group">
+                        <div class="filter-option">
+                            <input type="checkbox" id="featured-only">
+                            <label for="featured-only">Featured Products Only</label>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary w-100 mt-3" onclick="applyFilters()">
+                        Apply Filters
+                    </button>
+                </div>
+            </div>
+
+            <!-- Products Content -->
+            <div class="col-lg-9">
+                <div class="products-header">
+                    <div>
+                        <h2 style="margin: 0; font-size: 1.5rem;">
+                            {% if search_query %}
+                            Search Results for "{{ search_query }}"
+                            {% else %}
+                            All Products
+                            {% endif %}
+                            <span class="text-muted" style="font-size: 1rem; margin-left: 0.5rem;"
+                                id="products-count">({{ products|length }} products)</span>
+                        </h2>
+                    </div>
+
+                    <div class="search-sort-container">
+                        <div class="sort-options">
+                            <span class="sort-label">Sort by:</span>
+                            <select class="sort-select" id="sort-select" onchange="sortProducts()">
+                                <option value="newest">Newest First</option>
+                                <option value="price-low">Price: Low to High</option>
+                                <option value="price-high">Price: High to Low</option>
+                                <option value="name-asc">Name A-Z</option>
+                                <option value="name-desc">Name Z-A</option>
+                            </select>
+                        </div>
+
+                        <div class="view-options">
+                            <button class="view-btn active" data-view="grid" onclick="changeView('grid')">
+                                <i class="fas fa-th-large"></i>
+                            </button>
+                            <button class="view-btn" data-view="list" onclick="changeView('list')">
+                                <i class="fas fa-list"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Products Grid/List -->
+                <div id="products-container">
+                    {% if products %}
+                    <div class="products-grid" id="products-grid">
+                        {% for product in products %}
+                        <div class="product-card product-item" data-id="{{ product._id }}"
+                            data-name="{{ product.name|lower }}" data-category="{{ product.category_id }}"
+                            data-price="{{ product.price or 0 }}" data-stock="{{ product.stock_status }}"
+                            data-manufacturer="{{ product.manufacturer|lower }}"
+                            data-featured="{{ product.is_featured }}"
+                            data-created="{{ product.created_at.timestamp() if product.created_at else 0 }}">
+                            {% if product.images and product.images|length > 0 %}
+                            <div class="product-card-image">
+                                <img src="{{ url_for('static', filename='uploads/' + product.images[0]) }}"
+                                    alt="{{ product.name }}">
+                                {% if product.stock_status == 'in_stock' %}
+                                <div class="product-card-badge">In Stock</div>
+                                {% elif product.stock_status == 'limited' %}
+                                <div class="product-card-badge" style="background: var(--warning); color: black;">
+                                    Limited</div>
+                                {% endif %}
+                                {% if product.is_featured == 'yes' %}
+                                <div class="product-card-badge"
+                                    style="left: 1rem; right: auto; background: var(--accent-primary); color: black;">
+                                    Featured</div>
+                                {% endif %}
+                                <div class="product-card-overlay">
+                                    <a href="{{ url_for('product_detail', product_id=product._id) }}"
+                                        class="btn btn-sm btn-primary">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{{ url_for('enquiry', product_id=product._id) }}"
+                                        class="btn btn-sm btn-accent">
+                                        <i class="fas fa-envelope"></i>
+                                    </a>
+                                    <button class="btn btn-sm btn-secondary"
+                                        onclick="addToFavorites('{{ product._id }}')">
+                                        <i class="fas fa-heart"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="product-card-image">
+                                <div class="no-image">
+                                    <i class="fas fa-cog"></i>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <div class="product-content">
+                                <h3 class="product-name">{{ product.name }}</h3>
+                                <div class="product-category">
+                                    {% if category_dict.get(product.category_id) %}
+                                    {{ category_dict[product.category_id] }}
+                                    {% else %}
+                                    Uncategorized
+                                    {% endif %}
+                                </div>
+
+                                <div class="product-meta">
+                                    <div class="product-partno">
+                                        <i class="fas fa-hashtag"></i>
+                                        <span>{{ product.part_number }}</span>
+                                    </div>
+                                    <div class="product-manufacturer">
+                                        <i class="fas fa-industry"></i>
+                                        <span>{{ product.manufacturer }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="product-specs">
+                                    <p class="spec-text">{{ product.description|truncate(100) }}</p>
+                                </div>
+
+                                <div class="product-footer">
+                                    <div class="product-price">
+                                        {% if product.price and product.price > 0 %}
+                                        <span class="price-label">From</span>
+                                        <span class="price-value">₹{{ "%.2f"|format(product.price) }}</span>
+                                        {% else %}
+                                        <span class="price-value">Contact for Price</span>
+                                        {% endif %}
+                                    </div>
+                                    <a href="{{ url_for('product_detail', product_id=product._id) }}" class="btn-view">
+                                        View Details
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="empty-products">
+                        <div class="empty-icon">
+                            <i class="fas fa-box-open"></i>
+                        </div>
+                        <h3>No Products Found</h3>
+                        <p class="text-muted mb-4">
+                            {% if search_query %}
+                            No products match your search criteria. Try different keywords or filters.
+                            {% else %}
+                            There are currently no products available. Please check back later.
+                            {% endif %}
+                        </p>
+                        <div class="d-flex gap-3 justify-content-center">
+                            <button class="btn btn-primary" onclick="clearAllFilters()">
+                                Clear Filters
+                            </button>
+                            <a href="{{ url_for('enquiry') }}" class="btn btn-outline">
+                                Request Custom Parts
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Pagination -->
+                {% if products|length >= 20 %}
+                <div class="pagination-container">
+                    <nav class="pagination">
+                        <a href="#" class="page-link disabled">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                        <a href="#" class="page-link active">1</a>
+                        <a href="#" class="page-link">2</a>
+                        <a href="#" class="page-link">3</a>
+                        <a href="#" class="page-link">4</a>
+                        <a href="#" class="page-link">5</a>
+                        <a href="#" class="page-link">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </nav>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="section-cta py-6">
+    <div class="container">
+        <div class="cta-content text-center">
+            <h2 class="cta-title">Can't Find What You Need?</h2>
+            <p class="cta-text">
+                Our technical team can help source or customize components for your specific requirements.
+            </p>
+            <div class="cta-actions">
+                <a href="{{ url_for('enquiry') }}" class="btn btn-primary btn-lg mr-3">
+                    <i class="fas fa-envelope mr-2"></i>Custom Enquiry
+                </a>
+                <a href="tel:+912212345678" class="btn btn-outline btn-lg">
+                    <i class="fas fa-phone mr-2"></i>Call Our Experts
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Current view state
+    let currentView = 'grid';
+    let currentSort = 'newest';
+    let allProducts = [];
+
+    // Initialize products data
+    document.addEventListener('DOMContentLoaded', function () {
+        // Store all products data
+        allProducts = Array.from(document.querySelectorAll('.product-item')).map(item => ({
+            element: item,
+            id: item.dataset.id,
+            name: item.dataset.name,
+            category: item.dataset.category,
+            price: parseFloat(item.dataset.price) || 0,
+            stock: item.dataset.stock,
+            manufacturer: item.dataset.manufacturer,
+            featured: item.dataset.featured,
+            created: parseFloat(item.dataset.created) || 0
+        }));
+
+        // Initialize manufacturers filter
+        updateManufacturerFilters();
+
+        // Initialize price slider
+        initPriceSlider();
+
+        // Apply initial filters from URL
+        applyInitialFilters();
+
+        // Setup live search
+        setupLiveSearch();
+    });
+
+    function changeView(view) {
+        currentView = view;
+
+        // Update active button
+        document.querySelectorAll('.view-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.view === view);
+        });
+
+        // Change layout
+        const container = document.getElementById('products-grid');
+        if (view === 'list') {
+            container.classList.remove('products-grid');
+            container.classList.add('products-list');
+
+            // Convert cards to list view
+            allProducts.forEach((product, index) => {
+                const card = product.element;
+                card.classList.add('product-card-list');
+
+                // Store original content
+                if (!card.dataset.originalContent) {
+                    card.dataset.originalContent = card.innerHTML;
+                }
+
+                // Create list view HTML
+                const imageSrc = card.querySelector('img')?.src || '';
+                const name = card.querySelector('.product-name')?.textContent || '';
+                const category = card.querySelector('.product-category')?.textContent || '';
+                const partNo = card.querySelector('.product-partno span')?.textContent || '';
+                const manufacturer = card.querySelector('.product-manufacturer span')?.textContent || '';
+                const description = card.querySelector('.spec-text')?.textContent || '';
+                const price = card.querySelector('.price-value')?.textContent || '';
+                const priceLabel = card.querySelector('.price-label')?.textContent || '';
+
+                card.innerHTML = `
+                    <div class="product-image-list">
+                        ${imageSrc ? `<img src="${imageSrc}" alt="${name}">` :
+                        '<div class="no-image"><i class="fas fa-cog"></i></div>'}
+                    </div>
+                    <div class="product-content-list">
+                        <div class="product-header-list">
+                            <h3 class="product-name-list">${name}</h3>
+                            <div class="product-meta-list">
+                                <span><i class="fas fa-tag"></i> ${category}</span>
+                                <span><i class="fas fa-hashtag"></i> ${partNo}</span>
+                                <span><i class="fas fa-industry"></i> ${manufacturer}</span>
+                            </div>
+                        </div>
+                        <div class="product-specs-list">
+                            ${description}
+                        </div>
+                        <div class="product-footer-list">
+                            <div class="product-price">
+                                ${priceLabel ? `<span class="price-label">${priceLabel}</span>` : ''}
+                                <span class="price-value">${price}</span>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <a href="${card.querySelector('.btn-view')?.href || '#'}" class="btn-view">
+                                    View Details
+                                </a>
+                                <a href="#" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-envelope mr-1"></i> Quote
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        } else {
+            container.classList.remove('products-list');
+            container.classList.add('products-grid');
+
+            // Restore original grid view
+            allProducts.forEach(product => {
+                const card = product.element;
+                card.classList.remove('product-card-list');
+                if (card.dataset.originalContent) {
+                    card.innerHTML = card.dataset.originalContent;
+                }
+            });
+        }
+
+        // Reapply filters to update layout
+        applyFilters();
+    }
+
+    function initPriceSlider() {
+        const slider = document.getElementById('price-slider');
+        const minPriceInput = document.getElementById('min-price');
+        const maxPriceInput = document.getElementById('max-price');
+        const priceDisplay = document.getElementById('price-range-display');
+
+        function updatePriceDisplay() {
+            const min = parseInt(minPriceInput.value) || 0;
+            const max = parseInt(maxPriceInput.value) || 1000000;
+            priceDisplay.textContent = `₹${min.toLocaleString()} - ₹${max.toLocaleString()}`;
+            slider.value = max;
+        }
+
+        slider.addEventListener('input', function () {
+            maxPriceInput.value = this.value;
+            updatePriceDisplay();
+        });
+
+        minPriceInput.addEventListener('change', function () {
+            if (parseInt(this.value) > parseInt(maxPriceInput.value)) {
+                this.value = maxPriceInput.value;
+            }
+            updatePriceDisplay();
+        });
+
+        maxPriceInput.addEventListener('change', function () {
+            if (parseInt(this.value) < parseInt(minPriceInput.value)) {
+                this.value = minPriceInput.value;
+            }
+            slider.value = this.value;
+            updatePriceDisplay();
+        });
+
+        updatePriceDisplay();
+    }
+
+    function updateManufacturerFilters() {
+        const manufacturers = new Set();
+        allProducts.forEach(product => {
+            if (product.manufacturer) {
+                manufacturers.add(product.manufacturer);
+            }
+        });
+
+        const container = document.getElementById('manufacturer-filters');
+        container.innerHTML = '';
+
+        Array.from(manufacturers).sort().forEach(manufacturer => {
+            const option = document.createElement('div');
+            option.className = 'filter-option';
+            option.innerHTML = `
+                <input type="checkbox" id="man-${manufacturer.replace(/\s+/g, '-').toLowerCase()}" 
+                       data-manufacturer="${manufacturer}">
+                <label for="man-${manufacturer.replace(/\s+/g, '-').toLowerCase()}">${manufacturer}</label>
+                <span class="filter-count">0</span>
+            `;
+            container.appendChild(option);
+        });
+    }
+
+    function applyInitialFilters() {
+        // Set category filter if selected
+        const selectedCategory = "{{ selected_category }}";
+        if (selectedCategory) {
+            const checkbox = document.querySelector(`input[data-category="${selectedCategory}"]`);
+            if (checkbox) {
+                checkbox.checked = true;
+            }
+        }
+
+        // Set search query
+        const searchQuery = "{{ search_query }}";
+        if (searchQuery) {
+            document.getElementById('live-search').value = searchQuery;
+        }
+
+        // Apply filters
+        applyFilters();
+    }
+
+    function setupLiveSearch() {
+        const searchInput = document.getElementById('live-search');
+        let searchTimeout;
+
+        searchInput.addEventListener('input', function () {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                applyFilters();
+            }, 300);
+        });
+
+        searchInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                applyFilters();
+            }
+        });
+    }
+
+    function applyFilters() {
+        const searchTerm = document.getElementById('live-search').value.toLowerCase();
+        const minPrice = parseInt(document.getElementById('min-price').value) || 0;
+        const maxPrice = parseInt(document.getElementById('max-price').value) || 1000000;
+        const featuredOnly = document.getElementById('featured-only').checked;
+
+        // Get selected categories
+        const selectedCategories = Array.from(
+            document.querySelectorAll('#category-filters input:checked')
+        ).map(input => input.dataset.category);
+
+        // Get selected stock status
+        const selectedStock = Array.from(
+            document.querySelectorAll('#stock-filters input:checked')
+        ).map(input => input.dataset.stock);
+
+        // Get selected manufacturers
+        const selectedManufacturers = Array.from(
+            document.querySelectorAll('#manufacturer-filters input:checked')
+        ).map(input => input.dataset.manufacturer?.toLowerCase());
+
+        let visibleCount = 0;
+
+        allProducts.forEach((product, index) => {
+            let visible = true;
+
+            // Search filter
+            if (searchTerm && !product.name.includes(searchTerm)) {
+                visible = false;
+            }
+
+            // Category filter
+            if (selectedCategories.length > 0 && !selectedCategories.includes(product.category)) {
+                visible = false;
+            }
+
+            // Price filter
+            if (product.price < minPrice || product.price > maxPrice) {
+                visible = false;
+            }
+
+            // Stock filter
+            if (selectedStock.length > 0 && !selectedStock.includes(product.stock)) {
+                visible = false;
+            }
+
+            // Manufacturer filter
+            if (selectedManufacturers.length > 0 && !selectedManufacturers.includes(product.manufacturer)) {
+                visible = false;
+            }
+
+            // Featured filter
+            if (featuredOnly && product.featured !== 'yes') {
+                visible = false;
+            }
+
+            if (visible) {
+                product.element.style.display = currentView === 'grid' ? 'block' : 'flex';
+                visibleCount++;
+
+                // Add animation
+                product.element.style.animation = 'fadeIn 0.3s ease';
+                product.element.style.animationDelay = `${index * 0.05}s`;
+            } else {
+                product.element.style.display = 'none';
+            }
+        });
+
+        // Update products count
+        document.getElementById('products-count').textContent = `(${visibleCount} products)`;
+
+        // Update filter counts
+        updateFilterCounts();
+
+        // Sort products
+        sortProducts();
+
+        // Show/hide empty state
+        const emptyState = document.querySelector('.empty-products');
+        if (emptyState) {
+            emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
+        }
+    }
+
+    function updateFilterCounts() {
+        // Update category counts
+        document.querySelectorAll('#category-filters .filter-option').forEach(option => {
+            const category = option.querySelector('input').dataset.category;
+            const count = allProducts.filter(p => p.category === category &&
+                p.element.style.display !== 'none').length;
+            option.querySelector('.filter-count').textContent = count;
+        });
+
+        // Update manufacturer counts
+        document.querySelectorAll('#manufacturer-filters .filter-option').forEach(option => {
+            const manufacturer = option.querySelector('input').dataset.manufacturer?.toLowerCase();
+            const count = allProducts.filter(p => p.manufacturer === manufacturer &&
+                p.element.style.display !== 'none').length;
+            option.querySelector('.filter-count').textContent = count;
+        });
+    }
+
+    function sortProducts() {
+        const sortValue = document.getElementById('sort-select').value;
+        currentSort = sortValue;
+
+        const container = document.getElementById('products-grid');
+        const visibleProducts = allProducts.filter(p => p.element.style.display !== 'none');
+
+        visibleProducts.sort((a, b) => {
+            switch (sortValue) {
+                case 'price-low':
+                    return a.price - b.price;
+                case 'price-high':
+                    return b.price - a.price;
+                case 'name-asc':
+                    return a.name.localeCompare(b.name);
+                case 'name-desc':
+                    return b.name.localeCompare(a.name);
+                case 'newest':
+                default:
+                    return b.created - a.created;
+            }
+        });
+
+        // Reorder elements
+        visibleProducts.forEach(product => {
+            container.appendChild(product.element);
+        });
+    }
+
+    function clearAllFilters() {
+        // Clear all checkboxes
+        document.querySelectorAll('input[type="checkbox"]').forEach(input => {
+            input.checked = false;
+        });
+
+        // Reset price range
+        document.getElementById('min-price').value = 0;
+        document.getElementById('max-price').value = 1000000;
+        initPriceSlider();
+
+        // Clear search
+        document.getElementById('live-search').value = '';
+
+        // Apply filters
+        applyFilters();
+    }
+
+    function performSearch() {
+        applyFilters();
+    }
+
+    // Add to favorites function
+    window.addToFavorites = function (productId) {
+        let favorites = JSON.parse(localStorage.getItem('mumbai-tech-favorites') || '[]');
+
+        if (!favorites.includes(productId)) {
+            favorites.push(productId);
+            localStorage.setItem('mumbai-tech-favorites', JSON.stringify(favorites));
+
+            // Show success message
+            alert('Product added to favorites!');
+        } else {
+            // Remove from favorites
+            favorites = favorites.filter(id => id !== productId);
+            localStorage.setItem('mumbai-tech-favorites', JSON.stringify(favorites));
+
+            // Show removed message
+            alert('Product removed from favorites!');
+        }
+
+        // Update UI if needed
+        updateFavoriteButtons();
+    };
+
+    function updateFavoriteButtons() {
+        const favorites = JSON.parse(localStorage.getItem('mumbai-tech-favorites') || '[]');
+
+        allProducts.forEach(product => {
+            const favoriteBtn = product.element.querySelector('.fa-heart')?.closest('button');
+            if (favoriteBtn) {
+                if (favorites.includes(product.id)) {
+                    favoriteBtn.innerHTML = '<i class="fas fa-heart" style="color: var(--error);"></i>';
+                } else {
+                    favoriteBtn.innerHTML = '<i class="fas fa-heart"></i>';
+                }
+            }
+        });
+    }
+
+    // Initialize favorite buttons
+    updateFavoriteButtons();
+</script>
+
+<style>
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    #stock-filters {
+        display: contents;
+    }
+</style>
+{% endblock %}

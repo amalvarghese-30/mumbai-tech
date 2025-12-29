@@ -1,0 +1,480 @@
+<!-- templates/public/about.html -->
+{% extends "base.html" %}
+
+{% block title %}About Us | Mumbai-Tech Industrial Parts{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-about {
+        background: linear-gradient(rgba(14, 14, 14, 0.9), rgba(14, 14, 14, 0.95)),
+        url("{{ url_for('static', filename='images/about-hero.jpg') }}");
+        background-size: cover;
+        background-position: center;
+        padding: 8rem 0 5rem;
+        text-align: center;
+    }
+
+    .hero-about h1 {
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .hero-about .subtitle {
+        font-size: 1.25rem;
+        color: var(--text-secondary);
+        max-width: 700px;
+        margin: 0 auto 2rem;
+        line-height: 1.6;
+    }
+
+    .timeline {
+        position: relative;
+        max-width: 800px;
+        margin: 4rem auto;
+        padding: 0 2rem;
+    }
+
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 4px;
+        height: 100%;
+        background: var(--accent-primary);
+    }
+
+    .timeline-item {
+        position: relative;
+        margin-bottom: 4rem;
+        width: 50%;
+        padding: 0 3rem;
+    }
+
+    .timeline-item:nth-child(odd) {
+        left: 0;
+        text-align: right;
+    }
+
+    .timeline-item:nth-child(even) {
+        left: 50%;
+        text-align: left;
+    }
+
+    .timeline-dot {
+        position: absolute;
+        top: 0;
+        width: 20px;
+        height: 20px;
+        background: var(--accent-primary);
+        border-radius: 50%;
+        border: 4px solid var(--bg-main);
+    }
+
+    .timeline-item:nth-child(odd) .timeline-dot {
+        right: -10px;
+    }
+
+    .timeline-item:nth-child(even) .timeline-dot {
+        left: -10px;
+    }
+
+    .timeline-year {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--accent-primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .timeline-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--text-main);
+    }
+
+    .values-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin: 4rem 0;
+    }
+
+    .value-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-soft);
+        border-radius: var(--radius-lg);
+        padding: 2rem;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .value-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--accent-primary);
+        box-shadow: var(--shadow-md);
+    }
+
+    .value-icon {
+        font-size: 3rem;
+        color: var(--accent-primary);
+        margin-bottom: 1.5rem;
+    }
+
+    .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+        margin: 4rem 0;
+    }
+
+    .team-member {
+        background: var(--bg-card);
+        border: 1px solid var(--border-soft);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .team-member:hover {
+        transform: translateY(-5px);
+        border-color: var(--accent-primary);
+        box-shadow: var(--shadow-md);
+    }
+
+    .team-member-image {
+        height: 200px;
+        background: var(--bg-input);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .team-member-image i {
+        font-size: 4rem;
+        color: var(--accent-primary);
+    }
+
+    .team-member-info {
+        padding: 1.5rem;
+    }
+
+    .member-name {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+
+    .member-role {
+        color: var(--accent-primary);
+        font-weight: 500;
+        margin-bottom: 1rem;
+    }
+
+    .member-bio {
+        color: var(--text-secondary);
+        font-size: 0.9375rem;
+        line-height: 1.5;
+    }
+
+    .stats-about {
+        background: var(--bg-elevated);
+        padding: 5rem 0;
+        text-align: center;
+    }
+
+    .stat-item-about {
+        display: inline-block;
+        padding: 2rem;
+        text-align: center;
+    }
+
+    .stat-number-about {
+        font-size: 3rem;
+        font-weight: 700;
+        color: var(--accent-primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label-about {
+        font-size: 1rem;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    @media (max-width: 768px) {
+        .timeline {
+            padding: 0 1rem;
+        }
+
+        .timeline::before {
+            left: 20px;
+        }
+
+        .timeline-item {
+            width: 100%;
+            left: 0 !important;
+            text-align: left !important;
+            padding-left: 50px;
+            padding-right: 0;
+        }
+
+        .timeline-item:nth-child(odd) .timeline-dot,
+        .timeline-item:nth-child(even) .timeline-dot {
+            left: 10px;
+            right: auto;
+        }
+
+        .hero-about h1 {
+            font-size: 2.5rem;
+        }
+
+        .hero-about .subtitle {
+            font-size: 1.125rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-about">
+    <div class="container">
+        <h1>Engineering Industrial Excellence Since 2008</h1>
+        <p class="subtitle">
+            Mumbai-Tech has been at the forefront of providing precision-engineered machinery parts
+            to industries across India and beyond. Our commitment to quality and reliability has made
+            us a trusted partner for industrial operations.
+        </p>
+        <a href="{{ url_for('enquiry') }}" class="btn btn-primary btn-lg">
+            <i class="fas fa-envelope mr-2"></i>Contact Us
+        </a>
+    </div>
+</section>
+
+<!-- Our Story -->
+<section class="container py-6">
+    <div class="text-center mb-6">
+        <h2 class="section-title">Our Journey</h2>
+        <p class="section-subtitle" style="max-width: 700px; margin: 0 auto;">
+            From a small workshop to a leading industrial parts supplier
+        </p>
+    </div>
+
+    <div class="timeline">
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+                <div class="timeline-year">2008</div>
+                <h3 class="timeline-title">Founded in Mumbai</h3>
+                <p>Started as a small workshop specializing in precision machining parts for local industries.</p>
+            </div>
+        </div>
+
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+                <div class="timeline-year">2012</div>
+                <h3 class="timeline-title">ISO Certification</h3>
+                <p>Achieved ISO 9001:2015 certification for quality management systems.</p>
+            </div>
+        </div>
+
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+                <div class="timeline-year">2015</div>
+                <h3 class="timeline-title">National Expansion</h3>
+                <p>Expanded operations to serve clients across India with warehouses in 4 major cities.</p>
+            </div>
+        </div>
+
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+                <div class="timeline-year">2018</div>
+                <h3 class="timeline-title">Digital Transformation</h3>
+                <p>Launched our e-commerce platform to better serve our industrial clients.</p>
+            </div>
+        </div>
+
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+                <div class="timeline-year">2023</div>
+                <h3 class="timeline-title">International Partnerships</h3>
+                <p>Established partnerships with manufacturers in Germany, Japan, and the USA.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Our Values -->
+<section class="bg-soft py-6">
+    <div class="container">
+        <div class="text-center mb-6">
+            <h2 class="section-title">Our Core Values</h2>
+            <p class="section-subtitle" style="max-width: 700px; margin: 0 auto;">
+                Principles that guide our operations and relationships
+            </p>
+        </div>
+
+        <div class="values-grid">
+            <div class="value-card">
+                <div class="value-icon">
+                    <i class="fas fa-medal"></i>
+                </div>
+                <h3>Quality Excellence</h3>
+                <p>Every component undergoes rigorous quality checks to meet international standards.</p>
+            </div>
+
+            <div class="value-card">
+                <div class="value-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <h3>Timely Delivery</h3>
+                <p>We understand the importance of timely delivery in industrial operations.</p>
+            </div>
+
+            <div class="value-card">
+                <div class="value-icon">
+                    <i class="fas fa-handshake"></i>
+                </div>
+                <h3>Customer Partnership</h3>
+                <p>We build long-term relationships based on trust and mutual success.</p>
+            </div>
+
+            <div class="value-card">
+                <div class="value-icon">
+                    <i class="fas fa-lightbulb"></i>
+                </div>
+                <h3>Innovation</h3>
+                <p>Constantly evolving to provide better solutions for modern industrial needs.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats -->
+<section class="stats-about">
+    <div class="container">
+        <div class="stats-about-grid"
+            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem;">
+            <div class="stat-item-about">
+                <div class="stat-number-about">500+</div>
+                <div class="stat-label-about">Products</div>
+            </div>
+            <div class="stat-item-about">
+                <div class="stat-number-about">25+</div>
+                <div class="stat-label-about">Categories</div>
+            </div>
+            <div class="stat-item-about">
+                <div class="stat-number-about">15+</div>
+                <div class="stat-label-about">Years Experience</div>
+            </div>
+            <div class="stat-item-about">
+                <div class="stat-number-about">1000+</div>
+                <div class="stat-label-about">Clients</div>
+            </div>
+            <div class="stat-item-about">
+                <div class="stat-number-about">4</div>
+                <div class="stat-label-about">Warehouses</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Team -->
+<section class="container py-6">
+    <div class="text-center mb-6">
+        <h2 class="section-title">Our Leadership Team</h2>
+        <p class="section-subtitle" style="max-width: 700px; margin: 0 auto;">
+            Experienced professionals dedicated to industrial excellence
+        </p>
+    </div>
+
+    <div class="team-grid">
+        <div class="team-member">
+            <div class="team-member-image">
+                <i class="fas fa-user-tie"></i>
+            </div>
+            <div class="team-member-info">
+                <h3 class="member-name">Rajesh Kumar</h3>
+                <div class="member-role">Founder & CEO</div>
+                <p class="member-bio">25+ years in industrial machinery and supply chain management.</p>
+            </div>
+        </div>
+
+        <div class="team-member">
+            <div class="team-member-image">
+                <i class="fas fa-user-cog"></i>
+            </div>
+            <div class="team-member-info">
+                <h3 class="member-name">Priya Sharma</h3>
+                <div class="member-role">Technical Director</div>
+                <p class="member-bio">Expert in precision engineering and quality control systems.</p>
+            </div>
+        </div>
+
+        <div class="team-member">
+            <div class="team-member-image">
+                <i class="fas fa-user-graduate"></i>
+            </div>
+            <div class="team-member-info">
+                <h3 class="member-name">Amit Patel</h3>
+                <div class="member-role">Operations Manager</div>
+                <p class="member-bio">Specializes in logistics and supply chain optimization.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="section-cta py-6">
+    <div class="container">
+        <div class="cta-content text-center">
+            <h2 class="cta-title">Partner With Us</h2>
+            <p class="cta-text">
+                Looking for reliable industrial parts supplier? Contact our team for customized solutions
+                and bulk procurement.
+            </p>
+            <div class="cta-actions">
+                <a href="{{ url_for('enquiry') }}" class="btn btn-primary btn-lg mr-3">
+                    <i class="fas fa-envelope mr-2"></i>Get Quote
+                </a>
+                <a href="tel:+912212345678" class="btn btn-outline btn-lg">
+                    <i class="fas fa-phone mr-2"></i>Call Now
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Animate timeline on scroll
+    document.addEventListener('DOMContentLoaded', function () {
+        const timelineItems = document.querySelectorAll('.timeline-item');
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.3 });
+
+        timelineItems.forEach(item => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(20px)';
+            item.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            observer.observe(item);
+        });
+    });
+</script>
+{% endblock %}

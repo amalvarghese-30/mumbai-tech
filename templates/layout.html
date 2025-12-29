@@ -1,0 +1,287 @@
+<!-- templates/layout.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Mumbai-Tech Industrial Parts{% endblock %}</title>
+
+    <!-- Meta Tags -->
+    <meta name="description"
+        content="{% block meta_description %}Engineering-grade machinery parts for industrial excellence. Precision components for construction, manufacturing, and heavy machinery.{% endblock %}">
+    <meta name="keywords"
+        content="{% block meta_keywords %}industrial parts, machinery components, engineering parts, manufacturing supplies, construction equipment parts{% endblock %}">
+    <meta name="author" content="Mumbai-Tech">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.url }}">
+    <meta property="og:title" content="{% block og_title %}{{ self.title() }}{% endblock %}">
+    <meta property="og:description" content="{{ self.meta_description() }}">
+    <meta property="og:image" content="{{ url_for('static', filename='logo-og.jpg', _external=True) }}">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="{{ request.url }}">
+    <meta property="twitter:title" content="{{ self.title() }}">
+    <meta property="twitter:description" content="{{ self.meta_description() }}">
+    <meta property="twitter:image" content="{{ url_for('static', filename='logo-twitter.jpg', _external=True) }}">
+
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180"
+        href="{{ url_for('static', filename='favicon/apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32"
+        href="{{ url_for('static', filename='favicon/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16"
+        href="{{ url_for('static', filename='favicon/favicon-16x16.png') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='favicon/site.webmanifest') }}">
+    <link rel="mask-icon" href="{{ url_for('static', filename='favicon/safari-pinned-tab.svg') }}" color="#f5b301">
+    <meta name="msapplication-TileColor" content="#0e0e0e">
+    <meta name="theme-color" content="#0e0e0e">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="industrial-theme">
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-messages">
+        {% for category, message in messages %}
+        <div class="flash-message flash-{{ category }}">
+            <span>{{ message }}</span>
+            <button class="flash-close">&times;</button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <!-- Header -->
+    {% block header %}
+    <header class="industrial-header">
+        <div class="container">
+            <nav class="navbar">
+                <!-- Logo -->
+                <div class="logo">
+                    <a href="{{ url_for('index') }}">
+                        <img src="{{ url_for('static', filename='LOGO.JPEG') }}" alt="Mumbai-Tech Industrial Parts"
+                            class="logo-image">
+                        <span class="logo-text">MUMBAI<span class="logo-accent">TECH</span></span>
+                    </a>
+                </div>
+
+                <!-- Navigation Menu -->
+                <div class="nav-menu" id="navMenu">
+                    <a href="{{ url_for('index') }}" class="nav-link {{ 'active' if request.endpoint == 'index' }}">
+                        <i class="fas fa-home mr-2"></i>Home
+                    </a>
+
+                    <div class="nav-dropdown">
+                        <a href="{{ url_for('categories') }}"
+                            class="nav-link {{ 'active' if request.endpoint in ['categories', 'category_products'] }}">
+                            <i class="fas fa-th-large mr-2"></i>Categories
+                        </a>
+                        <div class="dropdown-content">
+                            {% for category in categories[:5] %}
+                            <a href="{{ url_for('category_products', category_id=category._id) }}"
+                                class="dropdown-link">
+                                <i class="{{ category.icon_class or 'fas fa-cog' }}"></i>
+                                {{ category.name }}
+                            </a>
+                            {% endfor %}
+                            <a href="{{ url_for('categories') }}" class="dropdown-link view-all">
+                                <i class="fas fa-arrow-right mr-2"></i>View All Categories
+                            </a>
+                        </div>
+                    </div>
+
+                    <a href="{{ url_for('all_products') }}"
+                        class="nav-link {{ 'active' if request.endpoint == 'all_products' }}">
+                        <i class="fas fa-cogs mr-2"></i>Products
+                    </a>
+
+                    <a href="{{ url_for('about') }}" class="nav-link {{ 'active' if request.endpoint == 'about' }}">
+                        <i class="fas fa-info-circle mr-2"></i>About
+                    </a>
+
+                    <a href="{{ url_for('enquiry') }}" class="nav-link {{ 'active' if request.endpoint == 'enquiry' }}">
+                        <i class="fas fa-envelope mr-2"></i>Contact
+                    </a>
+                </div>
+
+                <!-- Navigation Actions -->
+                <div class="nav-actions">
+                    <!-- Search -->
+                    <div class="search-box">
+                        <form method="GET" action="{{ url_for('search') }}" class="search-form">
+                            <input type="text" name="q" class="search-input" placeholder="Search parts..."
+                                value="{{ request.args.get('q', '') }}">
+                            <button type="submit" class="search-btn">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Enquiry Button -->
+                    <a href="{{ url_for('enquiry') }}" class="btn-enquiry">
+                        <i class="fas fa-quote-right mr-2"></i>Get Quote
+                    </a>
+
+                    <!-- Mobile Menu Toggle -->
+                    <button class="mobile-menu-btn" id="mobileMenuBtn">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </nav>
+        </div>
+    </header>
+    {% endblock %}
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    {% block footer %}
+    <footer class="premium-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <!-- Company Info -->
+                <div class="footer-col">
+                    <div class="footer-logo">
+                        <img src="{{ url_for('static', filename='LOGO.JPEG') }}" alt="Mumbai-Tech"
+                            class="footer-logo-image">
+                        <span>MUMBAI-TECH</span>
+                    </div>
+                    <p class="footer-description">
+                        Engineering-grade machinery parts for industrial excellence.
+                        Precision components for construction, manufacturing, and heavy machinery.
+                    </p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link" title="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="social-link" title="LinkedIn">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="social-link" title="Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="social-link" title="YouTube">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="footer-col">
+                    <h4 class="footer-title">Quick Links</h4>
+                    <div class="footer-links">
+                        <a href="{{ url_for('index') }}" class="footer-link">Home</a>
+                        <a href="{{ url_for('categories') }}" class="footer-link">Categories</a>
+                        <a href="{{ url_for('all_products') }}" class="footer-link">Products</a>
+                        <a href="{{ url_for('about') }}" class="footer-link">About Us</a>
+                        <a href="{{ url_for('enquiry') }}" class="footer-link">Contact</a>
+                    </div>
+                </div>
+
+                <!-- Product Categories -->
+                <div class="footer-col">
+                    <h4 class="footer-title">Product Categories</h4>
+                    <div class="footer-links">
+                        {% for category in categories[:5] %}
+                        <a href="{{ url_for('category_products', category_id=category._id) }}" class="footer-link">
+                            {{ category.name }}
+                        </a>
+                        {% endfor %}
+                        <a href="{{ url_for('categories') }}" class="footer-link">
+                            View All Categories →
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="footer-col">
+                    <h4 class="footer-title">Contact Us</h4>
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div>
+                                <strong>Address:</strong><br>
+                                Plot No. 123, Industrial Area<br>
+                                Andheri East, Mumbai 400069
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <div>
+                                <strong>Phone:</strong><br>
+                                <a href="tel:+912212345678">+91 22 1234 5678</a>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <div>
+                                <strong>Email:</strong><br>
+                                <a href="mailto:sales@mumbai-tech.com">sales@mumbai-tech.com</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Bottom -->
+            <div class="footer-bottom">
+                <div class="footer-copyright">
+                    &copy; 2024 Mumbai-Tech Industrial Parts. All rights reserved.
+                </div>
+                <div class="footer-bottom-links">
+                    <a href="#" class="footer-link-sm">Privacy Policy</a>
+                    <a href="#" class="footer-link-sm">Terms of Service</a>
+                    <a href="#" class="footer-link-sm">Cookie Policy</a>
+                    <a href="#" class="footer-link-sm">Sitemap</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    {% endblock %}
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/gsap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+    <!-- Page-specific scripts -->
+    {% block extra_js %}{% endblock %}
+
+    <!-- Analytics (Optional) -->
+    {% if not config.DEBUG %}
+    <script>
+        // Google Analytics
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date(); a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-XXXXX-Y', 'auto');
+        ga('send', 'pageview');
+    </script>
+    {% endif %}
+</body>
+
+</html>
