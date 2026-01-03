@@ -184,7 +184,8 @@
     letter-spacing: 0.5px;
 }
 
-/* ===== NAVIGATION ===== */
+/* 
+
 .industrial-header {
     background: var(--bg-main);
     border-bottom: 1px solid var(--border-soft);
@@ -214,7 +215,7 @@
     right: 1rem;
     height: 2px;
     background: var(--accent-primary);
-}
+} */
 
 /* ===== TABLE STYLES ===== */
 .industrial-table {

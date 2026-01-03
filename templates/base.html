@@ -6,52 +6,88 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Mumbai-Tech | Industrial Machinery Parts{% endblock %}</title>
 
-    <!-- Industrial Typography -->
+    <!-- REMOVE THESE CONFLICTING CSS FILES -->
+    <!-- ❌ Remove this line: -->
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}"> -->
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@500;600;700&display=swap"
         rel="stylesheet">
 
-    <!-- Font Awesome for icons -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- GSAP for precise animations -->
-    <script src="{{ url_for('static', filename='js/gsap.min.js') }}"></script>
-
-    <!-- Main Styles -->
+    <!-- KEEP ONLY THESE CSS FILES -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
     {% block extra_css %}{% endblock %}
 
-    <!-- Favicon matching industrial theme -->
+    <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
 </head>
 
 <body class="bg-main text-main">
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-messages">
+        {% for category, message in messages %}
+        <div class="flash-message flash-{{ category }}">
+            <span>{{ message }}</span>
+            <button class="flash-close">&times;</button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
     <!-- Header -->
-    <header class="industrial-header">
-        <nav class="container">
-            <div class="nav-brand">
-                <a href="{{ url_for('index') }}" class="logo-link">
-                    <img src="{{ url_for('static', filename='logo.png') }}" alt="Mumbai-Tech Industrial Parts"
-                        class="logo-image">
-                </a>
-            </div>
+    <header class="professional-header">
+        <div class="container">
+            <nav class="professional-navbar">
 
-            <div class="nav-menu">
-                <a href="{{ url_for('index') }}" class="nav-link">Home</a>
-                <a href="{{ url_for('categories') }}" class="nav-link">Categories</a>
-                <a href="{{ url_for('all_products') }}" class="nav-link">Products</a>
-                <a href="{{ url_for('about') }}" class="nav-link">About</a>
-                <a href="{{ url_for('enquiry') }}" class="nav-link">Contact</a>
-            </div>
+                <!-- Logo -->
+                <div class="nav-logo">
+                    <a href="{{ url_for('index') }}" class="logo-brand">
+                        <img src="{{ url_for('static', filename='logo.png') }}" alt="Mumbai-Tech Industrial Parts"
+                            class="logo-img">
+                    </a>
+                </div>
 
-            <div class="nav-cta">
-                <a href="{{ url_for('enquiry') }}" class="btn-primary">
-                    <i class="fas fa-envelope mr-2"></i>Get Quote
-                </a>
-            </div>
-        </nav>
+                <!-- Navigation Menu -->
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="{{ url_for('index') }}" class="nav-link">Home</a></li>
+                    <li><a href="{{ url_for('categories') }}" class="nav-link">Categories</a></li>
+                    <li><a href="{{ url_for('all_products') }}" class="nav-link">Products</a></li>
+                    <li><a href="{{ url_for('about') }}" class="nav-link">About</a></li>
+                    <li><a href="{{ url_for('enquiry') }}" class="nav-link">Contact</a></li>
+
+                    <!-- Mobile CTA -->
+                    <li class="mobile-cta">
+                        <a href="{{ url_for('enquiry') }}" class="btn btn-primary">Get Quote</a>
+                    </li>
+                </ul>
+
+                <!-- Desktop CTA -->
+                <div class="nav-cta">
+                    <a href="{{ url_for('enquiry') }}" class="btn btn-primary desktop-only">
+                        Get Quote
+                    </a>
+                </div>
+
+                <!-- Hamburger Button -->
+                <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+
+            </nav>
+        </div>
     </header>
 
     <!-- Main Content -->
@@ -60,39 +96,79 @@
     </main>
 
     <!-- Footer -->
-    <footer class="industrial-footer">
+    <footer class="premium-footer">
         <div class="container">
-            <div class="footer-grid">
-                <div class="footer-brand">
-                    <img src="{{ url_for('static', filename='logo-white.png') }}" alt="Mumbai-Tech" class="footer-logo">
-                    <p class="footer-tagline">
-                        Engineering-grade machinery parts for industrial excellence.
-                    </p>
-                </div>
-
-                <div class="footer-links">
-                    <h4>Quick Links</h4>
-                    <a href="{{ url_for('categories') }}">Product Categories</a>
-                    <a href="{{ url_for('enquiry') }}">Request Quote</a>
-                    <a href="{{ url_for('about') }}">About Us</a>
-                </div>
-
-                <div class="footer-contact">
-                    <h4>Contact</h4>
-                    <p><i class="fas fa-phone mr-2"></i> +91 22 1234 5678</p>
-                    <p><i class="fas fa-envelope mr-2"></i> sales@mumbai-tech.com</p>
-                    <p><i class="fas fa-map-marker-alt mr-2"></i> Mumbai, India</p>
-                </div>
-            </div>
-
-            <div class="footer-bottom">
-                <p>&copy; 2024 Mumbai-Tech. All rights reserved. | Industrial Machinery Parts</p>
-            </div>
+            <!-- Your existing footer content -->
         </div>
     </footer>
 
+    <!-- Back to Top Button -->
+    <button class="back-to-top" id="backToTop" aria-label="Back to top">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
     <!-- JavaScript -->
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/gsap.min.js') }}"></script>
+
+    <!-- Navigation JavaScript -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const navToggle = document.getElementById("navToggle");
+            const navMenu = document.getElementById("navMenu");
+            const body = document.body;
+
+            if (navToggle && navMenu) {
+                navToggle.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    // Toggle classes
+                    navToggle.classList.toggle("active");
+                    navMenu.classList.toggle("active");
+                    body.classList.toggle("menu-open");
+
+                    // Prevent body scroll when menu is open
+                    if (navMenu.classList.contains("active")) {
+                        body.style.overflow = "hidden";
+                    } else {
+                        body.style.overflow = "";
+                    }
+                });
+
+                // Close menu when clicking links
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.addEventListener('click', () => {
+                        navToggle.classList.remove("active");
+                        navMenu.classList.remove("active");
+                        body.classList.remove("menu-open");
+                        body.style.overflow = "";
+                    });
+                });
+
+                // Close menu when clicking outside
+                document.addEventListener('click', function (e) {
+                    if (!navMenu.contains(e.target) && !navToggle.contains(e.target) && navMenu.classList.contains('active')) {
+                        navToggle.classList.remove("active");
+                        navMenu.classList.remove("active");
+                        body.classList.remove("menu-open");
+                        body.style.overflow = "";
+                    }
+                });
+
+                // Close menu with Escape key
+                document.addEventListener('keydown', function (e) {
+                    if (e.key === 'Escape' && navMenu.classList.contains('active')) {
+                        navToggle.classList.remove("active");
+                        navMenu.classList.remove("active");
+                        body.classList.remove("menu-open");
+                        body.style.overflow = "";
+                    }
+                });
+            }
+        });
+    </script>
+
     {% block extra_js %}{% endblock %}
 </body>
 

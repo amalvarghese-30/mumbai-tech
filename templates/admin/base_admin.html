@@ -126,6 +126,42 @@
             border: none;
         }
     </style>
+    <!-- Update admin base template with professional styling -->
+    <style>
+        .admin-body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .admin-sidebar {
+            background: linear-gradient(180deg, #141414 0%, #0A0A0A 100%);
+            border-right: 1px solid rgba(245, 179, 1, 0.2);
+        }
+
+        .admin-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-soft);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .data-table th {
+            background: linear-gradient(180deg, #1A1A1A 0%, #141414 100%);
+            border-bottom: 2px solid var(--professional-accent);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #F5B301 0%, #FFCC33 100%);
+            color: #000;
+            border: none;
+            font-weight: 600;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #FFCC33 0%, #F5B301 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245, 179, 1, 0.3);
+        }
+    </style>
 
     {% block extra_css %}{% endblock %}
 </head>

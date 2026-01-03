@@ -29,192 +29,305 @@
         line-height: 1.6;
     }
 
-    .timeline {
-        position: relative;
-        max-width: 800px;
-        margin: 4rem auto;
-        padding: 0 2rem;
+    .search-box {
+        margin-top: 2.5rem;
+        display: flex;
+        justify-content: center;
     }
 
-    .timeline::before {
-        content: '';
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 4px;
-        height: 100%;
-        background: var(--accent-primary);
+    .search-form {
+        display: flex;
+        width: 100%;
+        max-width: 520px;
+        background: var(--bg-card);
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        border: 1px solid var(--border-soft);
     }
 
-    .timeline-item {
-        position: relative;
-        margin-bottom: 4rem;
-        width: 50%;
-        padding: 0 3rem;
-    }
-
-    .timeline-item:nth-child(odd) {
-        left: 0;
-        text-align: right;
-    }
-
-    .timeline-item:nth-child(even) {
-        left: 50%;
-        text-align: left;
-    }
-
-    .timeline-dot {
-        position: absolute;
-        top: 0;
-        width: 20px;
-        height: 20px;
-        background: var(--accent-primary);
-        border-radius: 50%;
-        border: 4px solid var(--bg-main);
-    }
-
-    .timeline-item:nth-child(odd) .timeline-dot {
-        right: -10px;
-    }
-
-    .timeline-item:nth-child(even) .timeline-dot {
-        left: -10px;
-    }
-
-    .timeline-year {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: var(--accent-primary);
-        margin-bottom: 0.5rem;
-    }
-
-    .timeline-title {
-        font-size: 1.25rem;
-        font-weight: 600;
-        margin-bottom: 0.5rem;
+    .search-input {
+        flex: 1;
+        padding: 0.9rem 1rem;
+        background: transparent;
+        border: none;
         color: var(--text-main);
     }
 
-    .values-grid {
+    .search-input:focus {
+        outline: none;
+    }
+
+    .search-btn {
+        padding: 0 1.2rem;
+        background: var(--accent-primary);
+        border: none;
+        color: #000;
+    }
+
+    .about-content-section {
+        padding: 4rem 0;
+    }
+
+    .company-overview {
+        max-width: 800px;
+        margin: 0 auto 4rem;
+    }
+
+    .overview-text {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+        line-height: 1.8;
+        margin-bottom: 2rem;
+    }
+
+    .mission-vision-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
         gap: 2rem;
         margin: 4rem 0;
     }
 
-    .value-card {
+    .mission-card,
+    .vision-card {
         background: var(--bg-card);
         border: 1px solid var(--border-soft);
         border-radius: var(--radius-lg);
-        padding: 2rem;
-        text-align: center;
-        transition: all 0.3s ease;
+        padding: 2.5rem;
+        position: relative;
+        overflow: hidden;
     }
 
-    .value-card:hover {
-        transform: translateY(-5px);
-        border-color: var(--accent-primary);
-        box-shadow: var(--shadow-md);
+    .mission-card::before,
+    .vision-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: var(--accent-primary);
     }
 
-    .value-icon {
-        font-size: 3rem;
+    .mission-card h3,
+    .vision-card h3 {
         color: var(--accent-primary);
         margin-bottom: 1.5rem;
+        font-size: 1.5rem;
     }
 
-    .team-grid {
+    /* Why Choose Us - Horizontal Icon Layout */
+    .features-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
         gap: 2rem;
         margin: 4rem 0;
     }
 
-    .team-member {
+    .feature-item {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        padding: 1.5rem;
         background: var(--bg-card);
         border: 1px solid var(--border-soft);
         border-radius: var(--radius-lg);
-        overflow: hidden;
         transition: all 0.3s ease;
     }
 
-    .team-member:hover {
+    .feature-item:hover {
         transform: translateY(-5px);
         border-color: var(--accent-primary);
         box-shadow: var(--shadow-md);
     }
 
-    .team-member-image {
-        height: 200px;
-        background: var(--bg-input);
+    .feature-icon {
+        font-size: 2.5rem;
+        color: var(--accent-primary);
+        flex-shrink: 0;
+        width: 60px;
+        text-align: center;
+    }
+
+    .feature-content h4 {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+        color: var(--text-main);
+    }
+
+    .feature-content p {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    /* Industry Applications - Responsive Layout */
+    .application-item-responsive {
         display: flex;
         align-items: center;
+        padding: 1.25rem 1.5rem;
+        background: var(--bg-card);
+        border: 1px solid var(--border-soft);
+        border-radius: var(--radius-md);
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: inherit;
+        height: 100%;
         justify-content: center;
     }
 
-    .team-member-image i {
-        font-size: 4rem;
+    .application-item-responsive i {
+        font-size: 2rem;
         color: var(--accent-primary);
+        margin-right: 1rem;
     }
 
-    .team-member-info {
-        padding: 1.5rem;
-    }
-
-    .member-name {
-        font-size: 1.25rem;
+    .application-item-responsive span {
+        font-size: 1.05rem;
         font-weight: 600;
-        margin-bottom: 0.25rem;
+        color: var(--text-main);
     }
 
-    .member-role {
-        color: var(--accent-primary);
-        font-weight: 500;
-        margin-bottom: 1rem;
+    .application-item-responsive:hover {
+        transform: translateY(-4px);
+        border-color: var(--accent-primary);
+        box-shadow: var(--shadow-md);
     }
 
-    .member-bio {
-        color: var(--text-secondary);
-        font-size: 0.9375rem;
-        line-height: 1.5;
+    /* Startup Journey Timeline */
+    .journey-timeline {
+        position: relative;
+        max-width: 800px;
+        margin: 4rem auto;
+        padding: 0 2rem;
     }
 
-    .stats-about {
-        background: var(--bg-elevated);
-        padding: 5rem 0;
-        text-align: center;
+    .journey-timeline::before {
+        content: '';
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 3px;
+        height: 100%;
+        background: var(--accent-primary);
+        opacity: 0.3;
     }
 
-    .stat-item-about {
-        display: inline-block;
-        padding: 2rem;
-        text-align: center;
+    .journey-item {
+        position: relative;
+        margin-bottom: 3rem;
+        width: 50%;
+        padding: 0 3rem;
     }
 
-    .stat-number-about {
-        font-size: 3rem;
+    .journey-item:nth-child(odd) {
+        left: 0;
+        text-align: right;
+    }
+
+    .journey-item:nth-child(even) {
+        left: 50%;
+        text-align: left;
+    }
+
+    .journey-dot {
+        position: absolute;
+        top: 0;
+        width: 16px;
+        height: 16px;
+        background: var(--accent-primary);
+        border-radius: 50%;
+        border: 4px solid var(--bg-main);
+    }
+
+    .journey-item:nth-child(odd) .journey-dot {
+        right: -8px;
+    }
+
+    .journey-item:nth-child(even) .journey-dot {
+        left: -8px;
+    }
+
+    .journey-year {
+        font-size: 1.25rem;
         font-weight: 700;
         color: var(--accent-primary);
         margin-bottom: 0.5rem;
     }
 
-    .stat-label-about {
+    .journey-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--text-main);
+    }
+
+    .journey-description {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+
+    /* Startup Stats */
+    .startup-stats {
+        background: var(--bg-elevated);
+        padding: 5rem 0;
+        text-align: center;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+    }
+
+    .stat-item {
+        padding: 2rem;
+        text-align: center;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--accent-primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
         font-size: 1rem;
         color: var(--text-secondary);
         text-transform: uppercase;
         letter-spacing: 1px;
     }
 
+    /* CTA Section Enhancement */
+    .section-cta .cta-content {
+        background: linear-gradient(145deg,
+                var(--bg-card),
+                var(--bg-elevated));
+        padding: 3rem 2rem;
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--border-soft);
+    }
+
     @media (max-width: 768px) {
-        .timeline {
+        .hero-about h1 {
+            font-size: 2.5rem;
+        }
+
+        .hero-about .subtitle {
+            font-size: 1.125rem;
+        }
+
+        .journey-timeline {
             padding: 0 1rem;
         }
 
-        .timeline::before {
+        .journey-timeline::before {
             left: 20px;
         }
 
-        .timeline-item {
+        .journey-item {
             width: 100%;
             left: 0 !important;
             text-align: left !important;
@@ -222,18 +335,33 @@
             padding-right: 0;
         }
 
-        .timeline-item:nth-child(odd) .timeline-dot,
-        .timeline-item:nth-child(even) .timeline-dot {
-            left: 10px;
+        .journey-item:nth-child(odd) .journey-dot,
+        .journey-item:nth-child(even) .journey-dot {
+            left: 12px;
             right: auto;
         }
 
-        .hero-about h1 {
-            font-size: 2.5rem;
+        .feature-item {
+            flex-direction: column;
+            text-align: center;
         }
 
-        .hero-about .subtitle {
-            font-size: 1.125rem;
+        .feature-icon {
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        /* Mobile: Stack vertically for Industry Applications */
+        .application-item-responsive {
+            flex-direction: column;
+            text-align: center;
+            padding: 1.5rem 1rem;
+        }
+
+        .application-item-responsive i {
+            margin-right: 0;
+            margin-bottom: 0.75rem;
+            font-size: 2.5rem;
         }
     }
 </style>
@@ -243,190 +371,300 @@
 <!-- Hero Section -->
 <section class="hero-about">
     <div class="container">
-        <h1>Engineering Industrial Excellence Since 2008</h1>
+        <h1>Building the Future of Industrial Supply</h1>
         <p class="subtitle">
-            Mumbai-Tech has been at the forefront of providing precision-engineered machinery parts
-            to industries across India and beyond. Our commitment to quality and reliability has made
-            us a trusted partner for industrial operations.
+            Mumbai-Tech is an innovative startup dedicated to revolutionizing how industries source
+            machinery parts. We combine cutting-edge technology with deep industry expertise to provide
+            efficient, reliable solutions for modern manufacturing challenges.
         </p>
-        <a href="{{ url_for('enquiry') }}" class="btn btn-primary btn-lg">
-            <i class="fas fa-envelope mr-2"></i>Contact Us
-        </a>
-    </div>
-</section>
-
-<!-- Our Story -->
-<section class="container py-6">
-    <div class="text-center mb-6">
-        <h2 class="section-title">Our Journey</h2>
-        <p class="section-subtitle" style="max-width: 700px; margin: 0 auto;">
-            From a small workshop to a leading industrial parts supplier
-        </p>
-    </div>
-
-    <div class="timeline">
-        <div class="timeline-item">
-            <div class="timeline-dot"></div>
-            <div class="timeline-content">
-                <div class="timeline-year">2008</div>
-                <h3 class="timeline-title">Founded in Mumbai</h3>
-                <p>Started as a small workshop specializing in precision machining parts for local industries.</p>
-            </div>
-        </div>
-
-        <div class="timeline-item">
-            <div class="timeline-dot"></div>
-            <div class="timeline-content">
-                <div class="timeline-year">2012</div>
-                <h3 class="timeline-title">ISO Certification</h3>
-                <p>Achieved ISO 9001:2015 certification for quality management systems.</p>
-            </div>
-        </div>
-
-        <div class="timeline-item">
-            <div class="timeline-dot"></div>
-            <div class="timeline-content">
-                <div class="timeline-year">2015</div>
-                <h3 class="timeline-title">National Expansion</h3>
-                <p>Expanded operations to serve clients across India with warehouses in 4 major cities.</p>
-            </div>
-        </div>
-
-        <div class="timeline-item">
-            <div class="timeline-dot"></div>
-            <div class="timeline-content">
-                <div class="timeline-year">2018</div>
-                <h3 class="timeline-title">Digital Transformation</h3>
-                <p>Launched our e-commerce platform to better serve our industrial clients.</p>
-            </div>
-        </div>
-
-        <div class="timeline-item">
-            <div class="timeline-dot"></div>
-            <div class="timeline-content">
-                <div class="timeline-year">2023</div>
-                <h3 class="timeline-title">International Partnerships</h3>
-                <p>Established partnerships with manufacturers in Germany, Japan, and the USA.</p>
-            </div>
+        <div class="search-box">
+            <form method="GET" action="{{ url_for('search') }}" class="search-form">
+                <input type="text" name="q" class="search-input" placeholder="Search our industrial parts catalog...">
+                <button type="submit" class="search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
         </div>
     </div>
 </section>
 
-<!-- Our Values -->
-<section class="bg-soft py-6">
+<!-- Company Overview -->
+<section class="about-content-section">
     <div class="container">
         <div class="text-center mb-6">
-            <h2 class="section-title">Our Core Values</h2>
+            <h2 class="section-title">Our Story</h2>
             <p class="section-subtitle" style="max-width: 700px; margin: 0 auto;">
-                Principles that guide our operations and relationships
+                A new vision for industrial procurement
             </p>
         </div>
 
-        <div class="values-grid">
-            <div class="value-card">
-                <div class="value-icon">
-                    <i class="fas fa-medal"></i>
-                </div>
-                <h3>Quality Excellence</h3>
-                <p>Every component undergoes rigorous quality checks to meet international standards.</p>
+        <div class="company-overview">
+            <div class="overview-text">
+                <p>Founded in 2023, Mumbai-Tech emerged from a simple observation: industrial procurement
+                    needed to be more efficient, transparent, and reliable. Traditional supply chains were
+                    often fragmented, slow, and lacked the technological integration that modern industries demand.</p>
+
+                <p>Our founders, with decades of combined experience in industrial engineering and
+                    technology, set out to create a platform that would bridge this gap. We started with
+                    a clear mission: to build India's most reliable and technologically advanced industrial
+                    parts marketplace.</p>
+
+                <p>Today, we're building partnerships with manufacturers across the globe while
+                    developing our own proprietary technology to streamline the procurement process.
+                    We believe that by combining quality products with smart technology, we can help
+                    industries operate more efficiently and sustainably.</p>
+            </div>
+        </div>
+
+        <!-- Mission & Vision -->
+        <div class="mission-vision-grid">
+            <div class="mission-card">
+                <h3>Our Mission</h3>
+                <p>To revolutionize industrial procurement by providing a seamless, technology-driven
+                    platform that connects manufacturers with quality machinery parts, ensuring reliability,
+                    transparency, and efficiency in every transaction.</p>
             </div>
 
-            <div class="value-card">
-                <div class="value-icon">
-                    <i class="fas fa-clock"></i>
+            <div class="vision-card">
+                <h3>Our Vision</h3>
+                <p>To become India's most trusted industrial parts marketplace by 2028, recognized for
+                    our commitment to quality, innovation, and customer satisfaction while contributing
+                    to the growth of India's manufacturing sector.</p>
+            </div>
+        </div>
+
+        <!-- Why Choose Us -->
+        <div class="text-center mb-6">
+            <h2 class="section-title">Why Choose Mumbai-Tech</h2>
+            <p class="section-subtitle" style="max-width: 700px; margin: 0 auto;">
+                What makes us different in the industrial supply landscape
+            </p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-bolt"></i>
                 </div>
-                <h3>Timely Delivery</h3>
-                <p>We understand the importance of timely delivery in industrial operations.</p>
+                <div class="feature-content">
+                    <h4>Innovative Technology</h4>
+                    <p>Our proprietary platform uses advanced algorithms to match your requirements with the best
+                        available parts and suppliers.</p>
+                </div>
             </div>
 
-            <div class="value-card">
-                <div class="value-icon">
-                    <i class="fas fa-handshake"></i>
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-check-circle"></i>
                 </div>
-                <h3>Customer Partnership</h3>
-                <p>We build long-term relationships based on trust and mutual success.</p>
+                <div class="feature-content">
+                    <h4>Quality Assured</h4>
+                    <p>Every product undergoes rigorous verification. We work only with certified manufacturers and
+                        conduct regular quality audits.</p>
+                </div>
             </div>
 
-            <div class="value-card">
-                <div class="value-icon">
-                    <i class="fas fa-lightbulb"></i>
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-headset"></i>
                 </div>
-                <h3>Innovation</h3>
-                <p>Constantly evolving to provide better solutions for modern industrial needs.</p>
+                <div class="feature-content">
+                    <h4>Technical Support</h4>
+                    <p>Our team of engineers provides technical consultation to ensure you get exactly what your
+                        machinery needs.</p>
+                </div>
+            </div>
+
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-shipping-fast"></i>
+                </div>
+                <div class="feature-content">
+                    <h4>Fast & Reliable</h4>
+                    <p>Strategic partnerships with logistics providers ensure timely delivery, even for urgent
+                        requirements.</p>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Stats -->
-<section class="stats-about">
-    <div class="container">
-        <div class="stats-about-grid"
-            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem;">
-            <div class="stat-item-about">
-                <div class="stat-number-about">500+</div>
-                <div class="stat-label-about">Products</div>
-            </div>
-            <div class="stat-item-about">
-                <div class="stat-number-about">25+</div>
-                <div class="stat-label-about">Categories</div>
-            </div>
-            <div class="stat-item-about">
-                <div class="stat-number-about">15+</div>
-                <div class="stat-label-about">Years Experience</div>
-            </div>
-            <div class="stat-item-about">
-                <div class="stat-number-about">1000+</div>
-                <div class="stat-label-about">Clients</div>
-            </div>
-            <div class="stat-item-about">
-                <div class="stat-number-about">4</div>
-                <div class="stat-label-about">Warehouses</div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Team -->
-<section class="container py-6">
-    <div class="text-center mb-6">
-        <h2 class="section-title">Our Leadership Team</h2>
+<!-- Industry Applications -->
+<!-- <section class="container py-6">
+    <div class="text-center mb-5">
+        <h2 class="section-title">Industry Applications</h2>
         <p class="section-subtitle" style="max-width: 700px; margin: 0 auto;">
-            Experienced professionals dedicated to industrial excellence
+            Serving diverse industrial sectors with precision components
         </p>
     </div>
 
-    <div class="team-grid">
-        <div class="team-member">
-            <div class="team-member-image">
+    <div class="row justify-content-center">
+        <div class="col-md-3 col-sm-6 mb-4">
+            <div class="application-item-responsive">
+                <i class="fas fa-tractor"></i>
+                <span>Agriculture</span>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6 mb-4">
+            <div class="application-item-responsive">
+                <i class="fas fa-hard-hat"></i>
+                <span>Construction</span>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6 mb-4">
+            <div class="application-item-responsive">
+                <i class="fas fa-industry"></i>
+                <span>Manufacturing</span>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6 mb-4">
+            <div class="application-item-responsive">
+                <i class="fas fa-truck-monster"></i>
+                <span>Mining</span>
+            </div>
+        </div>
+    </div>
+</section> -->
+
+<!-- Startup Journey -->
+<section class="bg-soft py-6">
+    <div class="container">
+        <div class="text-center mb-6">
+            <h2 class="section-title">Our Startup Journey</h2>
+            <p class="section-subtitle" style="max-width: 700px; margin: 0 auto;">
+                Milestones in our growth story
+            </p>
+        </div>
+
+        <div class="journey-timeline">
+            <div class="journey-item">
+                <div class="journey-dot"></div>
+                <div class="journey-content">
+                    <div class="journey-year">Jan 2023</div>
+                    <h3 class="journey-title">Company Founded</h3>
+                    <p class="journey-description">Mumbai-Tech officially incorporated with initial seed funding.</p>
+                </div>
+            </div>
+
+            <div class="journey-item">
+                <div class="journey-dot"></div>
+                <div class="journey-content">
+                    <div class="journey-year">Apr 2023</div>
+                    <h3 class="journey-title">Platform Development</h3>
+                    <p class="journey-description">Began development of our proprietary industrial procurement platform.
+                    </p>
+                </div>
+            </div>
+
+            <div class="journey-item">
+                <div class="journey-dot"></div>
+                <div class="journey-content">
+                    <div class="journey-year">Aug 2023</div>
+                    <h3 class="journey-title">First Partnerships</h3>
+                    <p class="journey-description">Signed agreements with 15+ industrial manufacturers.</p>
+                </div>
+            </div>
+
+            <div class="journey-item">
+                <div class="journey-dot"></div>
+                <div class="journey-content">
+                    <div class="journey-year">Nov 2023</div>
+                    <h3 class="journey-title">Beta Launch</h3>
+                    <p class="journey-description">Soft launch with select industrial clients for feedback.</p>
+                </div>
+            </div>
+
+            <div class="journey-item">
+                <div class="journey-dot"></div>
+                <div class="journey-content">
+                    <div class="journey-year">Jan 2024</div>
+                    <h3 class="journey-title">Official Launch</h3>
+                    <p class="journey-description">Full public launch of Mumbai-Tech platform.</p>
+                </div>
+            </div>
+
+            <div class="journey-item">
+                <div class="journey-dot"></div>
+                <div class="journey-content">
+                    <div class="journey-year">Future</div>
+                    <h3 class="journey-title">Expansion Plans</h3>
+                    <p class="journey-description">Plans to expand to 5 new cities and onboard 100+ manufacturers.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Startup Stats -->
+<section class="startup-stats">
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-number">25+</div>
+                <div class="stat-label">Categories</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">150+</div>
+                <div class="stat-label">Products</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">15+</div>
+                <div class="stat-label">Manufacturers</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">50+</div>
+                <div class="stat-label">Happy Clients</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">3</div>
+                <div class="stat-label">Cities</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Team Section (Minimal for Startup) -->
+<section class="container py-6">
+    <div class="text-center mb-6">
+        <h2 class="section-title">Our Founders</h2>
+        <p class="section-subtitle" style="max-width: 700px; margin: 0 auto;">
+            The visionaries behind Mumbai-Tech
+        </p>
+    </div>
+
+    <div class="features-grid">
+        <div class="feature-item">
+            <div class="feature-icon">
                 <i class="fas fa-user-tie"></i>
             </div>
-            <div class="team-member-info">
-                <h3 class="member-name">Rajesh Kumar</h3>
-                <div class="member-role">Founder & CEO</div>
-                <p class="member-bio">25+ years in industrial machinery and supply chain management.</p>
+            <div class="feature-content">
+                <h4>Rajesh Kumar</h4>
+                <p>CEO & Co-Founder<br>Former industrial engineer with 15+ years experience in manufacturing and supply
+                    chain.</p>
             </div>
         </div>
 
-        <div class="team-member">
-            <div class="team-member-image">
-                <i class="fas fa-user-cog"></i>
+        <div class="feature-item">
+            <div class="feature-icon">
+                <i class="fas fa-laptop-code"></i>
             </div>
-            <div class="team-member-info">
-                <h3 class="member-name">Priya Sharma</h3>
-                <div class="member-role">Technical Director</div>
-                <p class="member-bio">Expert in precision engineering and quality control systems.</p>
+            <div class="feature-content">
+                <h4>Priya Sharma</h4>
+                <p>CTO & Co-Founder<br>Technology entrepreneur with expertise in building industrial SaaS platforms.</p>
             </div>
         </div>
 
-        <div class="team-member">
-            <div class="team-member-image">
-                <i class="fas fa-user-graduate"></i>
+        <div class="feature-item">
+            <div class="feature-icon">
+                <i class="fas fa-chart-line"></i>
             </div>
-            <div class="team-member-info">
-                <h3 class="member-name">Amit Patel</h3>
-                <div class="member-role">Operations Manager</div>
-                <p class="member-bio">Specializes in logistics and supply chain optimization.</p>
+            <div class="feature-content">
+                <h4>Amit Patel</h4>
+                <p>COO & Co-Founder<br>Operations specialist with background in industrial logistics and procurement.
+                </p>
             </div>
         </div>
     </div>
@@ -434,31 +672,35 @@
 
 <!-- CTA -->
 <section class="section-cta py-6">
+    <br>
     <div class="container">
         <div class="cta-content text-center">
-            <h2 class="cta-title">Partner With Us</h2>
+            <h2 class="cta-title">Join Our Growing Network</h2>
             <p class="cta-text">
-                Looking for reliable industrial parts supplier? Contact our team for customized solutions
-                and bulk procurement.
+                As a startup, we're building relationships with forward-thinking industrial clients.
+                Experience the future of industrial procurement today.
             </p>
             <div class="cta-actions">
                 <a href="{{ url_for('enquiry') }}" class="btn btn-primary btn-lg mr-3">
-                    <i class="fas fa-envelope mr-2"></i>Get Quote
+                    <i class="fas fa-envelope mr-2"></i>Get Started
                 </a>
-                <a href="tel:+912212345678" class="btn btn-outline btn-lg">
-                    <i class="fas fa-phone mr-2"></i>Call Now
+                <a href="{{ url_for('categories') }}" class="btn btn-outline btn-lg">
+                    <i class="fas fa-boxes mr-2"></i>Browse Catalog
                 </a>
             </div>
         </div>
     </div>
+    <br>
 </section>
+<br>
+
 {% endblock %}
 
 {% block extra_js %}
 <script>
     // Animate timeline on scroll
     document.addEventListener('DOMContentLoaded', function () {
-        const timelineItems = document.querySelectorAll('.timeline-item');
+        const journeyItems = document.querySelectorAll('.journey-item');
 
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -469,7 +711,7 @@
             });
         }, { threshold: 0.3 });
 
-        timelineItems.forEach(item => {
+        journeyItems.forEach(item => {
             item.style.opacity = '0';
             item.style.transform = 'translateY(20px)';
             item.style.transition = 'opacity 0.5s ease, transform 0.5s ease';

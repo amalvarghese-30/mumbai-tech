@@ -250,7 +250,16 @@ def about():
 def categories():
     """All categories page"""
     all_categories = list(categories_collection.find().sort('name', 1))
-    return render_template('public/categories.html', categories=all_categories)
+    
+    # Get product count for each category
+    products_count = {}
+    for category in all_categories:
+        count = products_collection.count_documents({'category_id': str(category['_id'])})
+        products_count[str(category['_id'])] = count
+    
+    return render_template('public/categories.html', 
+                         categories=all_categories,
+                         products_count=products_count)
 
 @app.route('/category/<category_id>')
 def category_products(category_id):
@@ -278,11 +287,23 @@ def all_products():
         query['category_id'] = category
     
     products = list(products_collection.find(query).sort('created_at', -1))
-    categories = get_categories()
+    
+    # Get categories for dropdown and create dictionaries
+    all_categories = list(categories_collection.find().sort('name', 1))
+    category_dict = {str(cat['_id']): cat['name'] for cat in all_categories}
+    categories_list = [(str(cat['_id']), cat['name']) for cat in all_categories]
+    
+    # Get product counts per category
+    products_count = {}
+    for cat in all_categories:
+        count = products_collection.count_documents({'category_id': str(cat['_id'])})
+        products_count[str(cat['_id'])] = count
     
     return render_template('public/products.html', 
                          products=products,
-                         categories=categories,
+                         categories=categories_list,
+                         category_dict=category_dict,
+                         products_count=products_count,
                          search_query=search,
                          selected_category=category)
 
@@ -421,14 +442,60 @@ def admin_dashboard():
 @app.route('/admin/products')
 @login_required
 def admin_products():
-    """Admin product management"""
-    products = list(products_collection.find().sort('created_at', -1))
-    categories = categories_collection.find()
+    """Admin product management with pagination"""
+    page = request.args.get('page', 1, type=int)
+    per_page = 20
+    
+    # Get search and filter parameters
+    search = request.args.get('search', '')
+    category = request.args.get('category', '')
+    stock_status = request.args.get('stock_status', '')
+    
+    # Build query
+    query = {}
+    if search:
+        query['$or'] = [
+            {'name': {'$regex': search, '$options': 'i'}},
+            {'part_number': {'$regex': search, '$options': 'i'}},
+            {'description': {'$regex': search, '$options': 'i'}}
+        ]
+    if category:
+        query['category_id'] = category
+    if stock_status:
+        query['stock_status'] = stock_status
+    
+    # Calculate total for pagination
+    total = products_collection.count_documents(query)
+    total_pages = (total + per_page - 1) // per_page if per_page > 0 else 1
+    
+    # Get products with pagination
+    skip = (page - 1) * per_page
+    products = list(products_collection.find(query)
+                   .sort('created_at', -1)
+                   .skip(skip)
+                   .limit(per_page))
+    
+    # Get categories for dropdown
+    categories = list(categories_collection.find().sort('name', 1))
     category_dict = {str(cat['_id']): cat['name'] for cat in categories}
+    
+    # Update product count for each category in category dict
+    for cat_id in category_dict:
+        category_dict[cat_id] = {
+            'name': category_dict[cat_id],
+            'count': products_collection.count_documents({'category_id': cat_id})
+        }
     
     return render_template('admin/products.html', 
                          products=products,
-                         category_dict=category_dict)
+                         category_dict=category_dict,
+                         categories=categories,
+                         current_page=page,
+                         total_pages=total_pages,
+                         total_products=total,
+                         search=search,
+                         selected_category=category,
+                         selected_stock=stock_status)
 
 @app.route('/admin/product/add', methods=['GET', 'POST'])
 @login_required
@@ -553,6 +620,11 @@ def delete_product(product_id):
 def admin_categories():
     """Category management"""
     categories = list(categories_collection.find().sort('name', 1))
+    
+    # Add product count to each category
+    for category in categories:
+        category['product_count'] = products_collection.count_documents({'category_id': str(category['_id'])})
+    
     return render_template('admin/categories.html', categories=categories)
 
 @app.route('/admin/category/add', methods=['GET', 'POST'])
