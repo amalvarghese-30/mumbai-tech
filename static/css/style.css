@@ -1,5 +1,11 @@
 /* static/css/style.css - Mumbai-Tech Industrial Theme */
 
+html,
+body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
 :root {
     /* Industrial Foundation */
     --bg-main: #111214;
@@ -382,9 +388,11 @@ body {
 }
 
 .container {
-    max-width: 1280px;
+    max-width: 1200px;
     margin: 0 auto;
+    width: 100%;
     padding: 0 var(--spacing-md);
+    overflow-x: hidden;
 }
 
 /* ===== TYPOGRAPHY ===== */
@@ -1428,22 +1436,26 @@ a:hover {
 /* ===== PRODUCT DETAIL PAGE ===== */
 .product-detail-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 40px;
     margin-bottom: 4rem;
+    width: 100%;
 }
 
 .product-gallery {
+    overflow: hidden;
     background: var(--bg-card);
     border: 1px solid var(--border-soft);
     border-radius: var(--radius-lg);
     padding: 2rem;
+    width: 100%;
 }
 
 .product-main-swiper {
     border-radius: var(--radius-md);
     overflow: hidden;
     margin-bottom: 1rem;
+    width: 100%;
 }
 
 .product-main-image {
@@ -1455,6 +1467,20 @@ a:hover {
 
 .product-thumbs-swiper {
     height: 100px;
+    width: 100%;
+    overflow: hidden;
+}
+
+.product-main-image,
+.product-thumbs-swiper img {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+.swiper-wrapper {
+    max-width: 100%;
 }
 
 .product-thumbs-swiper .swiper-slide {
