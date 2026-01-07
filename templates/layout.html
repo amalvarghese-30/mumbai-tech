@@ -31,63 +31,6 @@
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}"> -->
-
-    <!-- Emergency Mobile Fix -->
-    <style>
-        /* Emergency mobile toggle visibility */
-        @media (max-width: 768px) {
-            #mobileToggle {
-                display: flex !important;
-                visibility: visible !important;
-                opacity: 1 !important;
-                position: relative !important;
-                z-index: 10001 !important;
-                background: rgba(245, 179, 1, 0.1) !important;
-                border: 2px solid #F5B301 !important;
-                width: 50px !important;
-                height: 50px !important;
-                margin: 0 !important;
-            }
-
-            .nav-menu:not(.active) {
-                display: none !important;
-            }
-
-            .professional-navbar {
-                display: flex !important;
-                justify-content: space-between !important;
-                align-items: center !important;
-                padding: 10px 0 !important;
-            }
-
-            .nav-logo {
-                flex: 0 0 auto !important;
-            }
-
-            .nav-actions {
-                display: flex !important;
-                align-items: center !important;
-                gap: 10px !important;
-                flex: 0 0 auto !important;
-            }
-
-            .nav-menu.active {
-                display: flex !important;
-                position: fixed !important;
-                top: 80px !important;
-                left: 0 !important;
-                right: 0 !important;
-                bottom: 0 !important;
-                background: #0A0A0A !important;
-                flex-direction: column !important;
-                padding: 20px !important;
-                overflow-y: auto !important;
-                z-index: 10000 !important;
-                border-top: 2px solid #F5B301 !important;
-            }
-        }
-    </style>
 </head>
 
 <body class="industrial-theme">
@@ -105,10 +48,9 @@
     {% endif %}
     {% endwith %}
 
-    <!-- Professional Header -->
-    <header class="site-navbar">
+    <!-- Simple Working Header -->
+    <header class="site-navbar" id="mainNav">
         <div class="nav-container">
-
             <!-- LOGO -->
             <a href="{{ url_for('index') }}" class="nav-logo">
                 <img src="{{ url_for('static', filename='LOGO.jpeg') }}" alt="Mumbai Tech Engineers">
@@ -116,11 +58,14 @@
 
             <!-- NAV LINKS -->
             <nav class="nav-links" id="navLinks">
-                <a href="{{ url_for('index') }}">Home</a>
-                <a href="{{ url_for('categories') }}">Categories</a>
-                <a href="{{ url_for('all_products') }}">Products</a>
-                <a href="{{ url_for('about') }}">About</a>
-                <a href="{{ url_for('enquiry') }}">Contact</a>
+                <a href="{{ url_for('index') }}" {% if request.endpoint=='index' %}class="active" {% endif %}>Home</a>
+                <a href="{{ url_for('categories') }}" {% if request.endpoint=='categories' %}class="active" {% endif
+                    %}>Categories</a>
+                <a href="{{ url_for('all_products') }}" {% if request.endpoint in ['all_products', 'product_detail' ]
+                    %}class="active" {% endif %}>Products</a>
+                <a href="{{ url_for('about') }}" {% if request.endpoint=='about' %}class="active" {% endif %}>About</a>
+                <a href="{{ url_for('enquiry') }}" {% if request.endpoint=='enquiry' %}class="active" {% endif
+                    %}>Contact</a>
             </nav>
 
             <!-- CTA -->
@@ -134,160 +79,84 @@
                 <span></span>
                 <span></span>
             </div>
-
         </div>
     </header>
-
-
-    <!-- Mobile Search Overlay -->
-    <div class="mobile-search-overlay" id="mobileSearchOverlay">
-        <div class="mobile-search-container">
-            <form method="GET" action="{{ url_for('search') }}" class="mobile-search-form">
-                <div class="mobile-search-group">
-                    <input type="text" name="q" class="mobile-search-input" placeholder="Search industrial parts..."
-                        autocomplete="off">
-                    <button type="submit" class="mobile-search-button">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
-                <button type="button" class="mobile-search-close" id="mobileSearchClose" aria-label="Close search">
-                    <i class="fas fa-times"></i>
-                </button>
-            </form>
-        </div>
-    </div>
 
     <!-- Main Content -->
     <main class="main-content">
         {% block content %}{% endblock %}
     </main>
 
-    <!-- Professional Footer -->
-    <footer class="professional-footer">
-        <div class="container">
-            <div class="footer-main">
-                <!-- Company Info -->
-                <div class="footer-section">
-                    <div class="footer-brand">
-                        <img src="{{ url_for('static', filename='LOGO.JPEG') }}" alt="Mumbai-Tech" class="footer-logo">
-                        <h3 class="company-name">Mumbai-Tech Industrial Solutions</h3>
-                        <p class="company-tagline">Precision Engineering • Reliable Supply • Industrial Excellence</p>
-                    </div>
-
-                    <div class="footer-social">
-                        <p class="social-title">Connect With Us</p>
-                        <div class="social-links">
-                            <a href="#" class="social-link" aria-label="LinkedIn">
-                                <i class="fab fa-linkedin-in"></i>
-                            </a>
-                            <a href="#" class="social-link" aria-label="Facebook">
-                                <i class="fab fa-facebook-f"></i>
-                            </a>
-                            <a href="#" class="social-link" aria-label="Twitter">
-                                <i class="fab fa-twitter"></i>
-                            </a>
-                            <a href="#" class="social-link" aria-label="YouTube">
-                                <i class="fab fa-youtube"></i>
-                            </a>
-                            <a href="#" class="social-link" aria-label="Instagram">
-                                <i class="fab fa-instagram"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Quick Links -->
-                <div class="footer-section">
-                    <h4 class="footer-title">Quick Links</h4>
-                    <ul class="footer-links">
-                        <li><a href="{{ url_for('index') }}" class="footer-link">Home</a></li>
-                        <li><a href="{{ url_for('categories') }}" class="footer-link">Product Categories</a></li>
-                        <li><a href="{{ url_for('all_products') }}" class="footer-link">Browse Products</a></li>
-                        <li><a href="{{ url_for('about') }}" class="footer-link">About Company</a></li>
-                        <li><a href="{{ url_for('enquiry') }}" class="footer-link">Request Quote</a></li>
-                    </ul>
-                </div>
-
-                <!-- Categories -->
-                <div class="footer-section">
-                    <h4 class="footer-title">Top Categories</h4>
-                    <ul class="footer-links">
-                        {% for category in categories[:5] %}
-                        <li>
-                            <a href="{{ url_for('category_products', category_id=category._id) }}" class="footer-link">
-                                <i class="{{ category.icon_class or 'fas fa-cog' }}"></i>
-                                {{ category.name }}
-                            </a>
-                        </li>
-                        {% endfor %}
-                        <li><a href="{{ url_for('categories') }}" class="footer-link view-all">View All Categories →</a>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Contact Info -->
-                <div class="footer-section">
-                    <h4 class="footer-title">Contact Information</h4>
-                    <div class="contact-info">
-                        <div class="contact-item">
-                            <i class="fas fa-map-marker-alt contact-icon"></i>
-                            <div class="contact-details">
-                                <strong>Corporate Office</strong>
-                                <p>Plot No. 123, Industrial Area<br>Andheri East, Mumbai 400069</p>
-                            </div>
-                        </div>
-                        <div class="contact-item">
-                            <i class="fas fa-phone contact-icon"></i>
-                            <div class="contact-details">
-                                <strong>Sales & Support</strong>
-                                <p><a href="tel:+912212345678">+91 22 1234 5678</a></p>
-                            </div>
-                        </div>
-                        <div class="contact-item">
-                            <i class="fas fa-envelope contact-icon"></i>
-                            <div class="contact-details">
-                                <strong>Email Address</strong>
-                                <p><a href="mailto:sales@mumbai-tech.com">sales@mumbai-tech.com</a></p>
-                            </div>
-                        </div>
-                        <div class="contact-item">
-                            <i class="fas fa-clock contact-icon"></i>
-                            <div class="contact-details">
-                                <strong>Business Hours</strong>
-                                <p>Mon - Fri: 9:00 AM - 6:00 PM<br>Sat: 10:00 AM - 2:00 PM</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Footer Bottom -->
-            <div class="footer-bottom">
-                <div class="footer-copyright">
-                    <p>&copy; 2024 Mumbai-Tech Industrial Solutions. All Rights Reserved.</p>
-                </div>
-                <div class="footer-legal">
-                    <a href="#" class="legal-link">Privacy Policy</a>
-                    <span class="divider">|</span>
-                    <a href="#" class="legal-link">Terms of Service</a>
-                    <span class="divider">|</span>
-                    <a href="#" class="legal-link">Cookie Policy</a>
-                    <span class="divider">|</span>
-                    <a href="#" class="legal-link">Sitemap</a>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <!-- Footer (Add your footer here) -->
 
     <!-- Back to Top Button -->
     <button class="back-to-top" id="backToTop" aria-label="Back to top">
         <i class="fas fa-chevron-up"></i>
     </button>
 
-    <!-- Scripts -->
-    <script src="{{ url_for('static', filename='js/gsap.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/professional.js') }}"></script>
+    <!-- Simple JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Mobile menu toggle
+            const navToggle = document.getElementById('navToggle');
+            const navLinks = document.getElementById('navLinks');
+            const body = document.body;
+
+            if (navToggle && navLinks) {
+                navToggle.addEventListener('click', function () {
+                    navLinks.classList.toggle('active');
+                    navToggle.classList.toggle('active');
+                    body.classList.toggle('menu-open');
+                });
+
+                // Close menu when clicking a link
+                const links = navLinks.querySelectorAll('a');
+                links.forEach(link => {
+                    link.addEventListener('click', () => {
+                        navLinks.classList.remove('active');
+                        navToggle.classList.remove('active');
+                        body.classList.remove('menu-open');
+                    });
+                });
+            }
+
+            // Back to top button
+            const backToTopBtn = document.getElementById('backToTop');
+            if (backToTopBtn) {
+                window.addEventListener('scroll', function () {
+                    if (window.scrollY > 300) {
+                        backToTopBtn.classList.add('visible');
+                    } else {
+                        backToTopBtn.classList.remove('visible');
+                    }
+                });
+
+                backToTopBtn.addEventListener('click', function () {
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                });
+            }
+
+            // Flash messages auto-close
+            const flashMessages = document.querySelectorAll('.flash-message');
+            flashMessages.forEach(message => {
+                setTimeout(() => {
+                    message.style.opacity = '0';
+                    setTimeout(() => message.remove(), 500);
+                }, 5000);
+
+                const closeBtn = message.querySelector('.flash-close');
+                if (closeBtn) {
+                    closeBtn.addEventListener('click', () => {
+                        message.style.opacity = '0';
+                        setTimeout(() => message.remove(), 500);
+                    });
+                }
+            });
+        });
+    </script>
 
     {% block extra_js %}{% endblock %}
 </body>

@@ -2,13 +2,14 @@
 import os
 import json
 import time
+import threading
 from datetime import datetime, timedelta
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, TextAreaField, SelectField, IntegerField, DecimalField, PasswordField, SubmitField
-from wtforms.validators import DataRequired, Email, Length, NumberRange
+from wtforms.validators import DataRequired, Email, Length, NumberRange, InputRequired
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from flask_mail import Mail, Message
@@ -198,11 +199,46 @@ class EnquiryForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     phone = StringField('Phone', validators=[DataRequired(), Length(min=10, max=15)])
     company = StringField('Company Name', validators=[Length(max=200)])
-    message = TextAreaField('Enquiry Details', validators=[DataRequired(), Length(min=10)])
+    country = SelectField('Country', choices=[
+        ('', 'Select Country'),
+        ('India', 'India'),
+        ('USA', 'United States'),
+        ('UK', 'United Kingdom'),
+        ('Germany', 'Germany'),
+        ('Japan', 'Japan'),
+        ('Other', 'Other')
+    ], validators=[InputRequired()])  # Changed from DataRequired to InputRequired
+    industry = SelectField('Industry', choices=[
+        ('', 'Select Industry'),
+        ('construction', 'Construction'),
+        ('manufacturing', 'Manufacturing'),
+        ('mining', 'Mining'),
+        ('agriculture', 'Agriculture'),
+        ('oil_gas', 'Oil & Gas'),
+        ('other', 'Other')
+    ])
+    message = TextAreaField('Enquiry Details', validators=[DataRequired(), Length(min=2)])
+    quantity = IntegerField('Quantity', validators=[NumberRange(min=1)], default=1)
+    quantity_unit = SelectField('Unit', choices=[
+        ('pieces', 'Pieces'),
+        ('sets', 'Sets'),
+        ('kilograms', 'Kilograms'),
+        ('liters', 'Liters'),
+        ('meters', 'Meters')
+    ], default='pieces')
+    delivery_urgency = SelectField('Delivery Urgency', choices=[
+        ('', 'Select urgency'),
+        ('urgent', 'Urgent (Within 1 week)'),
+        ('standard', 'Standard (2-4 weeks)'),
+        ('flexible', 'Flexible (1-3 months)')
+    ], default='standard', validators=[InputRequired()])  # Added InputRequired
     product_id = StringField('Product ID')
+    spec_files = FileField('Specification Files', 
+                          validators=[FileAllowed(['pdf', 'doc', 'docx', 'jpg', 
+                                                 'jpeg', 'png', 'dwg', 'dxf'], 
+                                                 'Unsupported file type')])
     submit = SubmitField('Send Enquiry')
 
-# Utility Functions
 def log_activity(action, details, user_id=None):
     """Log admin activities"""
     activity = {
@@ -221,8 +257,12 @@ def save_uploaded_file(file):
         filename = secure_filename(file.filename)
         unique_filename = f"{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}_{filename}"
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
-        file.save(file_path)
-        return unique_filename
+        try:
+            file.save(file_path)
+            return unique_filename
+        except Exception as e:
+            app.logger.error(f"Failed to save file: {e}")
+            return None
     return None
 
 def get_categories():
@@ -321,57 +361,224 @@ def product_detail(product_id):
     
     return render_template('public/product_detail.html', product=product)
 
+
 @app.route('/enquiry', methods=['GET', 'POST'])
 def enquiry():
     """Submit enquiry form"""
     form = EnquiryForm()
     product_id = request.args.get('product_id', '')
+    product = None
     
     if product_id:
-        product = products_collection.find_one({'_id': ObjectId(product_id)})
-        form.product_id.data = product_id
-    
-    if form.validate_on_submit():
-        enquiry_data = {
-            'name': form.name.data,
-            'email': form.email.data,
-            'phone': form.phone.data,
-            'company': form.company.data,
-            'message': form.message.data,
-            'product_id': form.product_id.data,
-            'status': 'new',
-            'created_at': datetime.utcnow(),
-            'ip_address': request.remote_addr
-        }
-        
-        # Save enquiry
-        enquiries_collection.insert_one(enquiry_data)
-        
-        # Send email notification
         try:
-            msg = Message('New Product Enquiry - MUMBAI-TECH',
-                         recipients=[app.config['MAIL_USERNAME']])
-            msg.body = f"""
-            New Enquiry Received:
-            
-            Name: {form.name.data}
-            Email: {form.email.data}
-            Phone: {form.phone.data}
-            Company: {form.company.data}
-            
-            Message:
-            {form.message.data}
-            
-            Product ID: {form.product_id.data if form.product_id.data else 'General Enquiry'}
-            """
-            mail.send(msg)
+            product = products_collection.find_one({'_id': ObjectId(product_id)})
+            if product:
+                form.product_id.data = product_id
         except Exception as e:
-            app.logger.error(f'Failed to send email: {str(e)}')
+            app.logger.error(f"Error loading product: {e}")
+    
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            try:
+                # Handle file upload FIRST
+                uploaded_files = []
+                file = request.files.get('spec_files')
+                
+                if file and file.filename:
+                    filename = save_uploaded_file(file)
+                    if filename:
+                        uploaded_files.append(filename)
+                
+                # Save enquiry to database
+                enquiry_data = {
+                    'name': form.name.data,
+                    'email': form.email.data,
+                    'phone': form.phone.data,
+                    'company': form.company.data or '',
+                    'country': form.country.data,
+                    'industry': form.industry.data or '',
+                    'message': form.message.data,
+                    'quantity': form.quantity.data,
+                    'quantity_unit': form.quantity_unit.data,
+                    'delivery_urgency': form.delivery_urgency.data,
+                    'product_id': form.product_id.data or '',
+                    'uploaded_files': uploaded_files,
+                    'status': 'new',
+                    'created_at': datetime.utcnow(),
+                    'ip_address': request.remote_addr
+                }
+                
+                # Insert enquiry
+                result = enquiries_collection.insert_one(enquiry_data)
+                enquiry_id = str(result.inserted_id)
+                
+                # Send emails ASYNCHRONOUSLY (in background)
+                threading.Thread(
+                    target=send_enquiry_emails,
+                    args=(enquiry_id, enquiry_data, uploaded_files)
+                ).start()
+                
+                flash('Your enquiry has been submitted successfully! We will contact you soon.', 'success')
+                return redirect(url_for('enquiry_success', enquiry_id=enquiry_id))
+                
+            except Exception as e:
+                app.logger.error(f"Error saving enquiry: {e}")
+                flash('Error saving enquiry. Please try again.', 'error')
+                return redirect(url_for('enquiry'))
+        else:
+            if form.errors:
+                for field, errors in form.errors.items():
+                    for error in errors:
+                        flash(f'{field}: {error}', 'error')
+    
+    return render_template('public/enquiry.html', 
+                         form=form, 
+                         product_id=product_id,
+                         product=product)
+
+def send_enquiry_emails(enquiry_id, enquiry_data, uploaded_files):
+    """Send enquiry emails in background thread with app context"""
+    # Create app context for this thread
+    with app.app_context():
+        try:
+            # Email to admin
+            msg = Message(
+                subject=f'New Quote Request #{enquiry_id} - MUMBAI-TECH',
+                recipients=[app.config['MAIL_USERNAME']],
+                sender=app.config['MAIL_DEFAULT_SENDER']
+            )
+            
+            # Create a simpler message without HTML
+            msg.body = f"""
+            New Quote Request Received
+            ===========================
+            
+            Enquiry ID: {enquiry_id}
+            
+            Contact Information
+            -------------------
+            Name: {enquiry_data['name']}
+            Email: {enquiry_data['email']}
+            Phone: {enquiry_data['phone']}
+            Company: {enquiry_data['company'] or 'Not provided'}
+            Country: {enquiry_data['country']}
+            Industry: {enquiry_data['industry'] or 'Not specified'}
+            
+            Requirements
+            ------------
+            Quantity: {enquiry_data['quantity']} {enquiry_data['quantity_unit']}
+            Delivery Urgency: {enquiry_data['delivery_urgency']}
+            Product ID: {enquiry_data['product_id'] or 'General Enquiry'}
+            
+            Message
+            -------
+            {enquiry_data['message']}
+            
+            Uploaded Files
+            --------------
+            {len(uploaded_files)} file(s) uploaded
+            
+            This enquiry was submitted on {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')}
+            IP Address: {enquiry_data.get('ip_address', 'Unknown')}
+            """
+            
+            # Attach uploaded files
+            for filename in uploaded_files:
+                file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                if os.path.exists(file_path):
+                    with open(file_path, 'rb') as fp:
+                        msg.attach(filename, 'application/octet-stream', fp.read())
+            
+            mail.send(msg)
+            app.logger.info(f"Admin email sent for enquiry #{enquiry_id}")
+            
+            # Confirmation email to client
+            client_msg = Message(
+                subject='Thank you for your quote request - MUMBAI-TECH',
+                recipients=[enquiry_data['email']],
+                sender=app.config['MAIL_DEFAULT_SENDER']
+            )
+            client_msg.body = f"""
+            Dear {enquiry_data['name']},
+            
+            Thank you for submitting your quote request to Mumbai-Tech.
+            
+            We have received your enquiry (Reference: #{enquiry_id}) and our technical team is reviewing your requirements.
+            
+            We aim to provide you with a detailed quotation within 24 hours.
+            
+            For any urgent queries, please contact us at +91 22 1234 5678 or sales@mumbai-tech.com.
+            
+            Best regards,
+            Mumbai-Tech Industrial Solutions
+            """
+            mail.send(client_msg)
+            app.logger.info(f"Client confirmation email sent for enquiry #{enquiry_id}")
+            
+        except Exception as e:
+            app.logger.error(f"Failed to send email for enquiry #{enquiry_id}: {str(e)}")
+
+@app.route('/enquiry/success/<enquiry_id>')
+def enquiry_success(enquiry_id):
+    """Enquiry success confirmation page"""
+    try:
+        enquiry = enquiries_collection.find_one({'_id': ObjectId(enquiry_id)})
+        if not enquiry:
+            flash('Enquiry not found', 'error')
+            return redirect(url_for('index'))
         
-        flash('Your enquiry has been submitted successfully! We will contact you soon.', 'success')
+        return render_template('public/enquiry_success.html', 
+                             enquiry=enquiry, 
+                             enquiry_id=enquiry_id)
+    except Exception as e:
+        app.logger.error(f"Error loading enquiry success: {e}")
+        flash('Error loading enquiry details', 'error')
         return redirect(url_for('index'))
     
-    return render_template('public/enquiry.html', form=form, product_id=product_id)
+@app.route('/test-email')
+def test_email():
+    """Test email functionality"""
+    try:
+        print("DEBUG: Testing email configuration...")
+        print(f"DEBUG: MAIL_USERNAME: {app.config['MAIL_USERNAME']}")
+        print(f"DEBUG: MAIL_SERVER: {app.config['MAIL_SERVER']}")
+        
+        msg = Message(
+            subject='Test Email from Mumbai-Tech',
+            recipients=[app.config['MAIL_USERNAME']],
+            sender=app.config['MAIL_DEFAULT_SENDER']
+        )
+        msg.body = 'This is a test email from your Flask application.'
+        mail.send(msg)
+        return 'Test email sent successfully! Check your email inbox.'
+    except Exception as e:
+        return f'Failed to send email: {str(e)}'
+
+@app.route('/debug-email')
+def debug_email():
+    """Debug email configuration"""
+    import smtplib
+    
+    config_status = {
+        'MAIL_SERVER': app.config['MAIL_SERVER'],
+        'MAIL_PORT': app.config['MAIL_PORT'],
+        'MAIL_USERNAME': app.config['MAIL_USERNAME'],
+        'MAIL_USE_TLS': app.config['MAIL_USE_TLS'],
+        'MAIL_PASSWORD': '***' if app.config['MAIL_PASSWORD'] else 'Not set'
+    }
+    
+    try:
+        # Test SMTP connection
+        server = smtplib.SMTP(app.config['MAIL_SERVER'], app.config['MAIL_PORT'])
+        server.starttls()
+        server.login(app.config['MAIL_USERNAME'], app.config['MAIL_PASSWORD'])
+        server.quit()
+        
+        config_status['smtp_connection'] = 'SUCCESS'
+    except Exception as e:
+        config_status['smtp_connection'] = f'FAILED: {str(e)}'
+    
+    return jsonify(config_status)
 
 @app.route('/search')
 def search():
@@ -874,4 +1081,5 @@ if __name__ == '__main__':
     # Create default admin
     create_default_admin()
     
+    # Run the app with debug mode
     app.run(debug=True, host='0.0.0.0', port=5000)

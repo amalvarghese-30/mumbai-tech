@@ -6,11 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Mumbai-Tech | Industrial Machinery Parts{% endblock %}</title>
 
-    <!-- REMOVE THESE CONFLICTING CSS FILES -->
-    <!-- ❌ Remove this line: -->
-    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}"> -->
-
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -20,9 +15,9 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- KEEP ONLY THESE CSS FILES -->
+    <!-- CSS Files -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/professional.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
     {% block extra_css %}{% endblock %}
 
@@ -30,7 +25,7 @@
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
 </head>
 
-<body class="bg-main text-main">
+<body class="industrial-theme">
     <!-- Flash Messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
@@ -91,85 +86,164 @@
     </header>
 
     <!-- Main Content -->
-    <main>
+    <main class="site-main">
         {% block content %}{% endblock %}
     </main>
 
     <!-- Footer -->
-    <footer class="premium-footer">
+    <footer class="professional-footer">
         <div class="container">
-            <!-- Your existing footer content -->
+            <div class="footer-main">
+                <div class="footer-section">
+                    <div class="footer-brand">
+                        <img src="{{ url_for('static', filename='logo.png') }}" alt="MUMBAI-TECH Logo"
+                            class="footer-logo">
+                        <h3 class="company-name">MUMBAI-TECH</h3>
+                        <p class="company-tagline">Industrial Machinery & Equipment Solutions</p>
+                    </div>
+
+                    <div class="footer-social">
+                        <p class="social-title">Follow Us</p>
+                        <div class="social-links">
+                            <a href="#" class="social-link" aria-label="Facebook">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" class="social-link" aria-label="LinkedIn">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                            <a href="#" class="social-link" aria-label="Twitter">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" class="social-link" aria-label="Instagram">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer-section">
+                    <h4 class="footer-title">Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('index') }}" class="footer-link"><i class="fas fa-home"></i> Home</a>
+                        </li>
+                        <li><a href="{{ url_for('about') }}" class="footer-link"><i class="fas fa-info-circle"></i>
+                                About Us</a></li>
+                        <li><a href="{{ url_for('categories') }}" class="footer-link"><i class="fas fa-th-large"></i>
+                                Categories</a></li>
+                        <li><a href="{{ url_for('all_products') }}" class="footer-link"><i class="fas fa-box"></i>
+                                Products</a></li>
+                        <li><a href="{{ url_for('enquiry') }}" class="footer-link"><i class="fas fa-envelope"></i>
+                                Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- <div class="footer-section">
+                    <h4 class="footer-title">Categories</h4>
+                    <ul class="footer-links">
+                        {% for category in categories[:5] %}
+                        <li><a href="{{ url_for('category_products', category_id=category._id) }}"
+                                class="footer-link"><i class="fas fa-cog"></i> {{ category.name }}</a></li>
+                        {% endfor %}
+                        <li><a href="{{ url_for('categories') }}" class="footer-link view-all"><i
+                                    class="fas fa-arrow-right"></i> View All Categories</a></li>
+                    </ul>
+                </div> -->
+
+                <div class="footer-section">
+                    <h4 class="footer-title">Contact Info</h4>
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt contact-icon"></i>
+                            <div class="contact-details">
+                                <strong>Address</strong>
+                                <p>Industrial Area, Mumbai, Maharashtra 400001</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-phone contact-icon"></i>
+                            <div class="contact-details">
+                                <strong>Phone</strong>
+                                <p><a href="tel:+912212345678">+91 22 1234 5678</a></p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-envelope contact-icon"></i>
+                            <div class="contact-details">
+                                <strong>Email</strong>
+                                <p><a href="mailto:info@mumbai-tech.com">info@mumbai-tech.com</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div class="footer-copyright">
+                    <p>&copy; {{ config.current_year }} MUMBAI-TECH. All Rights Reserved.</p>
+                </div>
+                <div class="footer-legal">
+                    <a href="#" class="legal-link">Privacy Policy</a>
+                    <span class="divider">|</span>
+                    <a href="#" class="legal-link">Terms of Service</a>
+                    <span class="divider">|</span>
+                    <a href="#" class="legal-link">Sitemap</a>
+                </div>
+            </div>
         </div>
     </footer>
 
     <!-- Back to Top Button -->
-    <button class="back-to-top" id="backToTop" aria-label="Back to top">
+    <button id="backToTop" class="back-to-top" aria-label="Back to top">
         <i class="fas fa-chevron-up"></i>
     </button>
 
     <!-- JavaScript -->
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/gsap.min.js') }}"></script>
+    {% block extra_js %}{% endblock %}
 
-    <!-- Navigation JavaScript -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const navToggle = document.getElementById("navToggle");
-            const navMenu = document.getElementById("navMenu");
-            const body = document.body;
+    <!-- Simple Navigation Script -->
+    <!-- <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Mobile menu toggle
+            const navToggle = document.getElementById('navToggle');
+            const navMenu = document.getElementById('navMenu');
 
             if (navToggle && navMenu) {
-                navToggle.addEventListener("click", function (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    // Toggle classes
-                    navToggle.classList.toggle("active");
-                    navMenu.classList.toggle("active");
-                    body.classList.toggle("menu-open");
-
-                    // Prevent body scroll when menu is open
-                    if (navMenu.classList.contains("active")) {
-                        body.style.overflow = "hidden";
-                    } else {
-                        body.style.overflow = "";
-                    }
+                navToggle.addEventListener('click', function () {
+                    navMenu.classList.toggle('active');
+                    navToggle.classList.toggle('active');
                 });
 
-                // Close menu when clicking links
-                document.querySelectorAll('.nav-link').forEach(link => {
+                // Close menu when clicking a link
+                const navLinks = navMenu.querySelectorAll('a');
+                navLinks.forEach(link => {
                     link.addEventListener('click', () => {
-                        navToggle.classList.remove("active");
-                        navMenu.classList.remove("active");
-                        body.classList.remove("menu-open");
-                        body.style.overflow = "";
+                        navMenu.classList.remove('active');
+                        navToggle.classList.remove('active');
                     });
                 });
+            }
 
-                // Close menu when clicking outside
-                document.addEventListener('click', function (e) {
-                    if (!navMenu.contains(e.target) && !navToggle.contains(e.target) && navMenu.classList.contains('active')) {
-                        navToggle.classList.remove("active");
-                        navMenu.classList.remove("active");
-                        body.classList.remove("menu-open");
-                        body.style.overflow = "";
+            // Back to top button
+            const backToTopBtn = document.getElementById('backToTop');
+            if (backToTopBtn) {
+                window.addEventListener('scroll', function () {
+                    if (window.scrollY > 300) {
+                        backToTopBtn.classList.add('visible');
+                    } else {
+                        backToTopBtn.classList.remove('visible');
                     }
                 });
 
-                // Close menu with Escape key
-                document.addEventListener('keydown', function (e) {
-                    if (e.key === 'Escape' && navMenu.classList.contains('active')) {
-                        navToggle.classList.remove("active");
-                        navMenu.classList.remove("active");
-                        body.classList.remove("menu-open");
-                        body.style.overflow = "";
-                    }
+                backToTopBtn.addEventListener('click', function () {
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
                 });
             }
         });
-    </script>
-
-    {% block extra_js %}{% endblock %}
+    </script> -->
 </body>
 
 </html>

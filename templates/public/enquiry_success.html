@@ -251,7 +251,8 @@
         <!-- Confirmation Number -->
         <div class="confirmation-number">
             <div class="confirmation-label">Reference Number</div>
-            <div class="confirmation-code" id="referenceNumber">MT-{{ "%06d"|format(random_number) }}</div>
+            <div class="confirmation-code" id="referenceNumber">#{{ enquiry_id[-6:]|upper if enquiry_id else "000000" }}
+            </div>
         </div>
 
         <!-- Enquiry Details -->

@@ -114,7 +114,6 @@
         margin-bottom: 1.5rem;
         line-height: 1.6;
         max-width: 90%;
-        /* Optional advanced version with line clamping */
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
@@ -299,7 +298,6 @@
         margin-bottom: 1.5rem;
     }
 
-    /* Industry Applications - Responsive Layout */
     .application-item-responsive {
         display: flex;
         align-items: center;
@@ -332,7 +330,6 @@
         box-shadow: var(--shadow-md);
     }
 
-    /* CTA Section Enhancement */
     .section-cta .cta-content {
         background: linear-gradient(145deg,
                 var(--bg-card),
@@ -380,7 +377,6 @@
             text-align: center;
         }
 
-        /* Mobile: Stack vertically for Industry Applications */
         .application-item-responsive {
             flex-direction: column;
             text-align: center;
@@ -421,7 +417,32 @@
 <section class="enquiry-section">
     <div class="container">
         <div class="enquiry-container">
-            {% if product_id %}
+            <!-- Flash Messages Display -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ 'danger' if category == 'error' else category }} mb-4">
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <!-- Display Form Errors -->
+            {% if form.errors %}
+            <div class="alert alert-danger mb-4">
+                <strong>Please fix the following errors:</strong>
+                <ul class="mb-0 mt-2">
+                    {% for field, errors in form.errors.items() %}
+                    {% for error in errors %}
+                    <li><strong>{{ form[field].label.text }}:</strong> {{ error }}</li>
+                    {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {% if product_id and product %}
             <!-- Product Preview -->
             <div class="product-preview">
                 <div class="product-preview-image">
@@ -429,9 +450,8 @@
                     <img src="{{ url_for('static', filename='uploads/' + product.images[0]) }}"
                         alt="{{ product.name }}">
                     {% else %}
-                    <i class="fas fa-cog"
-                        style="font-size: 3rem; color: var(--border-medium); 
-                                                display: flex; align-items: center; justify-content: center; height: 100%;"></i>
+                    <i class="fas fa-cog" style="font-size: 3rem; color: var(--border-medium); 
+                        display: flex; align-items: center; justify-content: center; height: 100%;"></i>
                     {% endif %}
                 </div>
                 <div class="product-preview-info">
@@ -470,8 +490,9 @@
 
             <!-- Multi-step Form -->
             <div class="enquiry-form-card">
-                <form method="POST" action="{{ url_for('enquiry') }}" id="enquiryForm" enctype="multipart/form-data">
-                    {{ form.hidden_tag() }}
+                <form method="POST" action="{{ url_for('enquiry') }}" id="enquiryForm" enctype="multipart/form-data"
+                    novalidate>
+                    {{ form.hidden_tag() }} <!-- CRITICAL FIX: CSRF Token -->
                     <input type="hidden" name="product_id" value="{{ product_id or '' }}">
 
                     <!-- Step 1: Contact Information -->
@@ -482,14 +503,30 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     {{ form.name.label(class="form-label") }}
-                                    {{ form.name(class="form-control", required=true, placeholder="Your full name") }}
+                                    {{ form.name(class="form-control" + (" is-invalid" if form.name.errors else ""),
+                                    required=true, placeholder="Your full name") }}
+                                    {% if form.name.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.name.errors %}
+                                        {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     {{ form.email.label(class="form-label") }}
-                                    {{ form.email(class="form-control", required=true,
+                                    {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else ""),
+                                    required=true,
                                     placeholder="Email address", type="email") }}
+                                    {% if form.email.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.email.errors %}
+                                        {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -498,14 +535,30 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     {{ form.phone.label(class="form-label") }}
-                                    {{ form.phone(class="form-control", required=true,
+                                    {{ form.phone(class="form-control" + (" is-invalid" if form.phone.errors else ""),
+                                    required=true,
                                     placeholder="Phone number with country code") }}
+                                    {% if form.phone.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.phone.errors %}
+                                        {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     {{ form.company.label(class="form-label") }}
-                                    {{ form.company(class="form-control", placeholder="Company name (optional)") }}
+                                    {{ form.company(class="form-control" + (" is-invalid" if form.company.errors else
+                                    ""), placeholder="Company name (optional)") }}
+                                    {% if form.company.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.company.errors %}
+                                        {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -513,30 +566,30 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label">Country</label>
-                                    <select class="form-control" name="country" required>
-                                        <option value="">Select Country</option>
-                                        <option value="India" selected>India</option>
-                                        <option value="USA">United States</option>
-                                        <option value="UK">United Kingdom</option>
-                                        <option value="Germany">Germany</option>
-                                        <option value="Japan">Japan</option>
-                                        <option value="Other">Other</option>
-                                    </select>
+                                    {{ form.country.label(class="form-label") }}
+                                    {{ form.country(class="form-control" + (" is-invalid" if form.country.errors else
+                                    ""), required=true) }}
+                                    {% if form.country.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.country.errors %}
+                                        {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label">Industry</label>
-                                    <select class="form-control" name="industry">
-                                        <option value="">Select Industry</option>
-                                        <option value="construction">Construction</option>
-                                        <option value="manufacturing">Manufacturing</option>
-                                        <option value="mining">Mining</option>
-                                        <option value="agriculture">Agriculture</option>
-                                        <option value="oil_gas">Oil & Gas</option>
-                                        <option value="other">Other</option>
-                                    </select>
+                                    {{ form.industry.label(class="form-label") }}
+                                    {{ form.industry(class="form-control" + (" is-invalid" if form.industry.errors else
+                                    "")) }}
+                                    {% if form.industry.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.industry.errors %}
+                                        {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -558,50 +611,83 @@
 
                         <div class="form-group">
                             {{ form.message.label(class="form-label") }}
-                            {{ form.message(class="form-control", rows="6", required=true,
+                            {{ form.message(class="form-control" + (" is-invalid" if form.message.errors else ""),
+                            rows="6", required=true,
                             placeholder="Please provide details about your requirements:\n• Product specifications
                             needed\n• Quantity required\n• Application/Usage\n• Any special requirements\n• Delivery
                             timeline\n• Budget constraints (if any)") }}
+                            {% if form.message.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.message.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label">Quantity Required</label>
                             <div class="row">
                                 <div class="col-md-6">
-                                    <input type="number" name="quantity" class="form-control" min="1"
-                                        placeholder="Enter quantity" required>
+                                    <div class="form-group">
+                                        {{ form.quantity.label(class="form-label") }}
+                                        {{ form.quantity(class="form-control" + (" is-invalid" if form.quantity.errors
+                                        else ""), required=true, min="1",
+                                        placeholder="Enter quantity") }}
+                                        {% if form.quantity.errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.quantity.errors %}
+                                            {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                        {% endif %}
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <select class="form-control" name="quantity_unit">
-                                        <option value="pieces">Pieces</option>
-                                        <option value="sets">Sets</option>
-                                        <option value="kilograms">Kilograms</option>
-                                        <option value="liters">Liters</option>
-                                        <option value="meters">Meters</option>
-                                    </select>
+                                    <div class="form-group">
+                                        {{ form.quantity_unit.label(class="form-label") }}
+                                        {{ form.quantity_unit(class="form-control" + (" is-invalid" if
+                                        form.quantity_unit.errors else "")) }}
+                                        {% if form.quantity_unit.errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.quantity_unit.errors %}
+                                            {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                        {% endif %}
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label">Delivery Requirements</label>
-                            <select class="form-control" name="delivery_urgency">
-                                <option value="">Select urgency</option>
-                                <option value="urgent">Urgent (Within 1 week)</option>
-                                <option value="standard" selected>Standard (2-4 weeks)</option>
-                                <option value="flexible">Flexible (1-3 months)</option>
-                            </select>
+                            {{ form.delivery_urgency.label(class="form-label") }}
+                            {{ form.delivery_urgency(class="form-control" + (" is-invalid" if
+                            form.delivery_urgency.errors else "")) }}
+                            {% if form.delivery_urgency.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.delivery_urgency.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
                         </div>
 
+                        <!-- FIXED: File upload with proper error display -->
                         <div class="form-group">
                             <label class="form-label">Upload Specifications (Optional)</label>
-                            <div class="upload-area" onclick="document.getElementById('file-upload').click()">
+                            <div class="upload-area" onclick="document.getElementById('spec_files').click()">
                                 <i class="fas fa-cloud-upload-alt"></i>
                                 <p class="upload-text">Click to upload files</p>
                                 <p class="upload-note">Supported: PDF, DOC, JPG, PNG, CAD files (Max 10MB each)</p>
-                                <input type="file" id="file-upload" name="spec_files" multiple
-                                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.dwg,.dxf" style="display: none;">
+                                {{ form.spec_files(id="spec_files", style="display: none;") }}
                             </div>
+                            {% if form.spec_files.errors %}
+                            <div class="invalid-feedback" style="display: block;">
+                                {% for error in form.spec_files.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
                             <div id="file-preview" class="mt-2"></div>
                         </div>
                     </div>
@@ -621,7 +707,7 @@
                                 <div class="review-details" id="review-requirements"></div>
                             </div>
 
-                            {% if product_id %}
+                            {% if product_id and product %}
                             <div class="review-card mt-4">
                                 <h4 class="mb-3">Product Details</h4>
                                 <div class="review-details">
@@ -665,46 +751,6 @@
         </div>
     </div>
 </section>
-
-<!-- Industry Applications Section -->
-<!-- <section class="container py-6">
-    <div class="text-center mb-5">
-        <h2 class="section-title">Industry Applications</h2>
-        <p class="section-subtitle" style="max-width: 700px; margin: 0 auto;">
-            Serving diverse industrial sectors with precision components
-        </p>
-    </div>
-
-    <div class="row justify-content-center">
-        <div class="col-md-3 col-sm-6 mb-4">
-            <div class="application-item-responsive">
-                <i class="fas fa-tractor"></i>
-                <span>Agriculture</span>
-            </div>
-        </div>
-
-        <div class="col-md-3 col-sm-6 mb-4">
-            <div class="application-item-responsive">
-                <i class="fas fa-hard-hat"></i>
-                <span>Construction</span>
-            </div>
-        </div>
-
-        <div class="col-md-3 col-sm-6 mb-4">
-            <div class="application-item-responsive">
-                <i class="fas fa-industry"></i>
-                <span>Manufacturing</span>
-            </div>
-        </div>
-
-        <div class="col-md-3 col-sm-6 mb-4">
-            <div class="application-item-responsive">
-                <i class="fas fa-truck-monster"></i>
-                <span>Mining</span>
-            </div>
-        </div>
-    </div>
-</section> -->
 
 <!-- Process Info -->
 <section class="bg-soft py-6">
@@ -825,8 +871,8 @@
     }
 
     function nextStep() {
-        if (validateStep(currentStep)) {
-            if (currentStep < totalSteps) {
+        if (currentStep < totalSteps) {
+            if (validateStep(currentStep)) {
                 showStep(currentStep + 1);
             }
         }
@@ -861,12 +907,20 @@
         }
 
         if (step === 2) {
-            const messageField = document.querySelector('#step2 textarea[required]');
+            const messageField = document.querySelector('#step2 textarea[name="message"]');
             if (!messageField.value.trim()) {
                 isValid = false;
                 messageField.classList.add('is-invalid');
             } else {
                 messageField.classList.remove('is-invalid');
+            }
+
+            const quantityField = document.querySelector('#step2 input[name="quantity"]');
+            if (!quantityField.value || parseInt(quantityField.value) < 1) {
+                isValid = false;
+                quantityField.classList.add('is-invalid');
+            } else {
+                quantityField.classList.remove('is-invalid');
             }
         }
 
@@ -890,87 +944,139 @@
             <p><strong>Phone:</strong> ${document.querySelector('input[name="phone"]').value}</p>
             ${document.querySelector('input[name="company"]').value ?
                 `<p><strong>Company:</strong> ${document.querySelector('input[name="company"]').value}</p>` : ''}
-            <p><strong>Country:</strong> ${document.querySelector('select[name="country"]').value}</p>
-            ${document.querySelector('select[name="industry"]').value ?
+            ${document.querySelector('select[name="country"]')?.value ?
+                `<p><strong>Country:</strong> ${document.querySelector('select[name="country"]').value}</p>` : ''}
+            ${document.querySelector('select[name="industry"]')?.value ?
                 `<p><strong>Industry:</strong> ${document.querySelector('select[name="industry"]').value}</p>` : ''}
         `;
         document.getElementById('review-contact').innerHTML = contactInfo;
 
         // Requirements
+        const messageField = document.querySelector('textarea[name="message"]');
+        const quantityField = document.querySelector('input[name="quantity"]');
+        const quantityUnitField = document.querySelector('select[name="quantity_unit"]');
+        const deliveryUrgencyField = document.querySelector('select[name="delivery_urgency"]');
+
         const requirementsInfo = `
-            <p><strong>Message:</strong> ${document.querySelector('textarea[name="message"]').value}</p>
-            <p><strong>Quantity:</strong> ${document.querySelector('input[name="quantity"]').value || '1'} 
-            ${document.querySelector('select[name="quantity_unit"]').value}</p>
-            ${document.querySelector('select[name="delivery_urgency"]').value ?
-                `<p><strong>Delivery Urgency:</strong> ${document.querySelector('select[name="delivery_urgency"]').value}</p>` : ''}
+            <p><strong>Message:</strong> ${messageField?.value || 'Not provided'}</p>
+            <p><strong>Quantity:</strong> ${quantityField?.value || '1'} 
+            ${quantityUnitField?.value || 'pieces'}</p>
+            ${deliveryUrgencyField?.value ?
+                `<p><strong>Delivery Urgency:</strong> ${deliveryUrgencyField.value}</p>` : ''}
         `;
         document.getElementById('review-requirements').innerHTML = requirementsInfo;
     }
 
     // File upload preview
-    document.getElementById('file-upload').addEventListener('change', function (e) {
-        const preview = document.getElementById('file-preview');
-        preview.innerHTML = '';
+    const fileUploadElement = document.getElementById('spec_files');
+    if (fileUploadElement) {
+        fileUploadElement.addEventListener('change', function (e) {
+            const preview = document.getElementById('file-preview');
+            if (!preview) return;
 
-        Array.from(e.target.files).forEach(file => {
-            const fileItem = document.createElement('div');
-            fileItem.className = 'file-item';
-            fileItem.style.cssText = `
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-                padding: 0.5rem;
-                background: var(--bg-input);
-                border-radius: var(--radius-sm);
-                margin-bottom: 0.5rem;
-            `;
+            preview.innerHTML = '';
 
-            const icon = document.createElement('i');
-            if (file.type.includes('image')) {
-                icon.className = 'fas fa-image';
-            } else if (file.type.includes('pdf')) {
-                icon.className = 'fas fa-file-pdf';
-            } else if (file.type.includes('document')) {
-                icon.className = 'fas fa-file-word';
-            } else {
-                icon.className = 'fas fa-file';
-            }
-            icon.style.color = 'var(--accent-primary)';
+            Array.from(e.target.files).forEach(file => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.style.cssText = `
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    padding: 0.5rem;
+                    background: var(--bg-input);
+                    border-radius: var(--radius-sm);
+                    margin-bottom: 0.5rem;
+                `;
 
-            const info = document.createElement('span');
-            info.textContent = `${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
-            info.style.fontSize = '0.875rem';
-            info.style.color = 'var(--text-secondary)';
+                const icon = document.createElement('i');
+                if (file.type.includes('image')) {
+                    icon.className = 'fas fa-image';
+                } else if (file.type.includes('pdf')) {
+                    icon.className = 'fas fa-file-pdf';
+                } else if (file.type.includes('document')) {
+                    icon.className = 'fas fa-file-word';
+                } else {
+                    icon.className = 'fas fa-file';
+                }
+                icon.style.color = 'var(--accent-primary)';
 
-            fileItem.appendChild(icon);
-            fileItem.appendChild(info);
-            preview.appendChild(fileItem);
+                const info = document.createElement('span');
+                info.textContent = `${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+                info.style.fontSize = '0.875rem';
+                info.style.color = 'var(--text-secondary)';
+
+                fileItem.appendChild(icon);
+                fileItem.appendChild(info);
+                preview.appendChild(fileItem);
+            });
         });
-    });
+    }
 
     // Initialize form
     document.addEventListener('DOMContentLoaded', function () {
         showStep(1);
 
         // Add event listeners
-        document.getElementById('nextBtn').addEventListener('click', nextStep);
-        document.getElementById('prevBtn').addEventListener('click', prevStep);
+        const nextBtn = document.getElementById('nextBtn');
+        const prevBtn = document.getElementById('prevBtn');
+        const form = document.getElementById('enquiryForm');
 
-        // Validate form on submit
-        document.getElementById('enquiryForm').addEventListener('submit', function (e) {
-            if (!validateStep(3) || !document.getElementById('terms').checked) {
-                e.preventDefault();
-                alert('Please agree to the terms and ensure all information is correct.');
-            }
-        });
+        if (nextBtn) {
+            nextBtn.addEventListener('click', nextStep);
+        }
+
+        if (prevBtn) {
+            prevBtn.addEventListener('click', prevStep);
+        }
+
+        // Form submission handling
+        if (form) {
+            form.addEventListener('submit', function (e) {
+                // Only run validation if we're on step 3
+                if (currentStep === 3) {
+                    const termsCheckbox = document.getElementById('terms');
+
+                    // Validate all steps
+                    if (!validateStep(1) || !validateStep(2)) {
+                        e.preventDefault();
+                        alert('Please complete all required fields correctly.');
+                        return;
+                    }
+
+                    if (!termsCheckbox?.checked) {
+                        e.preventDefault();
+                        alert('Please agree to the Terms of Service and Privacy Policy.');
+                        return;
+                    }
+
+                    // All validation passed - show loading state
+                    const submitBtn = document.getElementById('submitBtn');
+                    if (submitBtn) {
+                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                        submitBtn.disabled = true;
+                    }
+
+                    // Allow form to submit normally
+                    console.log('Form is submitting...');
+                } else {
+                    // If not on step 3, prevent submission
+                    e.preventDefault();
+                    alert('Please complete all steps before submitting.');
+                    showStep(3);
+                }
+            });
+        }
 
         // Auto-format phone number
         const phoneInput = document.querySelector('input[name="phone"]');
-        phoneInput.addEventListener('input', function (e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 10) value = value.substring(0, 10);
-            e.target.value = value;
-        });
+        if (phoneInput) {
+            phoneInput.addEventListener('input', function (e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length > 10) value = value.substring(0, 10);
+                e.target.value = value;
+            });
+        }
     });
 </script>
 
@@ -1010,6 +1116,46 @@
 
     .is-invalid {
         border-color: var(--error) !important;
+    }
+
+    /* Flash message styling */
+    .alert {
+        padding: 1rem 1.25rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        border-left: 4px solid;
+    }
+
+    .alert-success {
+        background: rgba(46, 204, 113, 0.1);
+        border-color: #2ecc71;
+        color: #2ecc71;
+    }
+
+    .alert-error,
+    .alert-danger {
+        background: rgba(231, 76, 60, 0.1);
+        border-color: #e74c3c;
+        color: #e74c3c;
+    }
+
+    .alert-info {
+        background: rgba(52, 152, 219, 0.1);
+        border-color: #3498db;
+        color: #3498db;
+    }
+
+    .alert-warning {
+        background: rgba(243, 156, 18, 0.1);
+        border-color: #f39c12;
+        color: #f39c12;
+    }
+
+    .invalid-feedback {
+        color: var(--error);
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+        display: block;
     }
 </style>
 {% endblock %}
